@@ -1,5 +1,6 @@
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
+import { getTranslations } from "next-intl/server";
 import {
   getPropertyById,
   getTenantsByProperty,
@@ -16,6 +17,7 @@ export default async function PropertyDetailPage({
   params: Promise<{ locale: string; id: string }>;
 }) {
   const { locale, id } = await params;
+  const tCommon = await getTranslations("common");
 
   const property = getPropertyById(id);
   if (!property) notFound();
@@ -27,7 +29,7 @@ export default async function PropertyDetailPage({
   const contracts = getContractsByProperty(id);
 
   return (
-    <Suspense fallback={<div className="p-8 text-muted-foreground text-sm">Načítání…</div>}>
+    <Suspense fallback={<div className="p-8 text-muted-foreground text-sm">{tCommon("loading")}</div>}>
       <PropertyDetail
         locale={locale}
         property={property}

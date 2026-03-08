@@ -86,6 +86,7 @@
       "contracts": "Smlouvy",
       "documents": "Dokumenty"
     },
+    "propertyCount": "{count, plural, one {# nemovitost} few {# nemovitosti} other {# nemovitostí}}",
     "tenantCount": "{count, plural, one {# nájemník} few {# nájemníci} other {# nájemníků}}",
     "lesseeCount": "{count, plural, one {# pachtýř} few {# pachtýři} other {# pachtýřů}}",
     "noTenants": "Bez nájemníků",
@@ -289,7 +290,7 @@
     "edit": "Upravit",
     "add": "Přidat",
     "back": "Zpět",
-    "loading": "Načítání...",
+    "loading": "Načítání…",
     "error": "Chyba",
     "success": "Úspěch",
     "confirm": "Potvrdit",
@@ -298,6 +299,7 @@
     "all": "Vše",
     "noData": "Žádná data",
     "currency": "Kč",
-    "area": "m²"
+    "area": "m²",
+    "total": "Celkem"
   }
 }

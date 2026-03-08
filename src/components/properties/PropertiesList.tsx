@@ -151,7 +151,7 @@ export default function PropertiesList({ locale, items }: PropertiesListProps) {
       {/* Počet výsledků */}
       <p className="text-sm text-muted-foreground">
         {filtered.length === items.length
-          ? `${items.length} ${items.length === 1 ? "nemovitost" : items.length < 5 ? "nemovitosti" : "nemovitostí"}`
+          ? t("propertyCount", { count: items.length })
           : `${filtered.length} / ${items.length}`}
       </p>
 

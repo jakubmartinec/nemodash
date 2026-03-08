@@ -26,11 +26,13 @@ function formatCZK(amount: number): string {
 
 function FinanceSection({
   title,
+  totalLabel,
   lines,
   total,
   variant,
 }: {
   title: string;
+  totalLabel: string;
   lines: { label: string; amount: number }[];
   total: number;
   variant: "income" | "expense";
@@ -59,7 +61,7 @@ function FinanceSection({
           variant === "income" ? "text-green-700" : "text-red-600"
         )}
       >
-        <span className="text-sm font-semibold">Celkem</span>
+        <span className="text-sm font-semibold">{totalLabel}</span>
         <span className="text-sm font-bold tabular-nums">{formatCZK(total)}</span>
       </div>
     </div>
@@ -68,6 +70,7 @@ function FinanceSection({
 
 export default function MonthlyFinance({ data }: MonthlyFinanceProps) {
   const t = useTranslations("dashboard");
+  const tCommon = useTranslations("common");
 
   const totalIncome = data.incomeLines.reduce((s, l) => s + l.amount, 0);
   const totalExpense = data.expenseLines.reduce((s, l) => s + l.amount, 0);
@@ -94,6 +97,7 @@ export default function MonthlyFinance({ data }: MonthlyFinanceProps) {
         <div className="flex gap-8 flex-col sm:flex-row">
           <FinanceSection
             title={t("income")}
+            totalLabel={tCommon("total")}
             lines={incomeResolved}
             total={totalIncome}
             variant="income"
@@ -103,6 +107,7 @@ export default function MonthlyFinance({ data }: MonthlyFinanceProps) {
           <div className="border-t border-border sm:hidden" />
           <FinanceSection
             title={t("expenses")}
+            totalLabel={tCommon("total")}
             lines={expenseResolved}
             total={totalExpense}
             variant="expense"
