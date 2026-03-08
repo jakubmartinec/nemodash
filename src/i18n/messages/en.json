@@ -54,6 +54,10 @@
     "subtitle": "Manage your properties",
     "addProperty": "Add Property",
     "noProperties": "No properties",
+    "noResults": "No properties match your filters",
+    "noResultsHint": "Try changing or resetting filters",
+    "resetFilters": "Reset filters",
+    "searchPlaceholder": "Search by name or address…",
     "type": {
       "house": "House",
       "land": "Land"
@@ -81,7 +85,17 @@
       "insurance": "Insurance",
       "contracts": "Contracts",
       "documents": "Documents"
-    }
+    },
+    "tenantCount": "{count, plural, one {# tenant} other {# tenants}}",
+    "lesseeCount": "{count, plural, one {# lessee} other {# lessees}}",
+    "noTenants": "No tenants",
+    "statusPayment": "Payments",
+    "statusInspection": "Inspections",
+    "statusInsurance": "Insurance",
+    "statusOk": "OK",
+    "statusIssue": "Issue",
+    "statusNone": "—",
+    "areaUnit": "m²"
   },
   "tenants": {
     "title": "Tenants",

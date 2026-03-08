@@ -54,6 +54,10 @@
     "subtitle": "Správa vašich nemovitostí",
     "addProperty": "Přidat nemovitost",
     "noProperties": "Žádné nemovitosti",
+    "noResults": "Žádné nemovitosti nevyhovují filtru",
+    "noResultsHint": "Zkuste změnit nebo resetovat filtry",
+    "resetFilters": "Resetovat filtry",
+    "searchPlaceholder": "Hledat podle názvu nebo adresy…",
     "type": {
       "house": "Dům",
       "land": "Pozemek"
@@ -81,7 +85,17 @@
       "insurance": "Pojištění",
       "contracts": "Smlouvy",
       "documents": "Dokumenty"
-    }
+    },
+    "tenantCount": "{count, plural, one {# nájemník} few {# nájemníci} other {# nájemníků}}",
+    "lesseeCount": "{count, plural, one {# pachtýř} few {# pachtýři} other {# pachtýřů}}",
+    "noTenants": "Bez nájemníků",
+    "statusPayment": "Platby",
+    "statusInspection": "Revize",
+    "statusInsurance": "Pojistka",
+    "statusOk": "OK",
+    "statusIssue": "Problém",
+    "statusNone": "—",
+    "areaUnit": "m²"
   },
   "tenants": {
     "title": "Nájemníci",
