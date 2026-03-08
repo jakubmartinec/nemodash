@@ -1,0 +1,205 @@
+{
+  "nav": {
+    "dashboard": "Dashboard",
+    "properties": "Properties",
+    "payments": "Payments",
+    "inspections": "Inspections",
+    "settings": "Settings"
+  },
+  "dashboard": {
+    "title": "Dashboard",
+    "subtitle": "Overview of your properties and upcoming events",
+    "stats": {
+      "totalProperties": "Total Properties",
+      "activeContracts": "Active Contracts",
+      "pendingPayments": "Pending Payments",
+      "expiredInspections": "Expired Inspections"
+    },
+    "upcomingEvents": "Upcoming Events",
+    "recentPayments": "Recent Payments",
+    "propertyOverview": "Property Overview"
+  },
+  "properties": {
+    "title": "Properties",
+    "subtitle": "Manage your properties",
+    "addProperty": "Add Property",
+    "noProperties": "No properties",
+    "type": {
+      "house": "House",
+      "land": "Land"
+    },
+    "ownership": {
+      "owned": "Owned",
+      "rented": "Rented"
+    },
+    "fields": {
+      "name": "Name",
+      "type": "Type",
+      "address": "Address",
+      "cadastralNumber": "Cadastral Number",
+      "parcelNumbers": "Parcel Numbers",
+      "ownership": "Ownership",
+      "area": "Area (m²)",
+      "description": "Description",
+      "notes": "Notes"
+    },
+    "tabs": {
+      "overview": "Overview",
+      "tenants": "Tenants",
+      "payments": "Payments",
+      "inspections": "Inspections",
+      "insurance": "Insurance",
+      "contracts": "Contracts",
+      "documents": "Documents"
+    }
+  },
+  "tenants": {
+    "title": "Tenants",
+    "addTenant": "Add Tenant",
+    "noTenants": "No tenants",
+    "type": {
+      "tenant": "Tenant",
+      "lessee": "Lessee"
+    },
+    "fields": {
+      "name": "Name",
+      "email": "Email",
+      "phone": "Phone",
+      "type": "Type",
+      "contractStart": "Contract Start",
+      "contractEnd": "Contract End",
+      "monthlyRent": "Monthly Rent",
+      "deposit": "Deposit",
+      "notes": "Notes"
+    }
+  },
+  "payments": {
+    "title": "Payments",
+    "subtitle": "Overview of all payments",
+    "addPayment": "Add Payment",
+    "noPayments": "No payments",
+    "status": {
+      "pending": "Pending",
+      "paid": "Paid",
+      "overdue": "Overdue"
+    },
+    "direction": {
+      "incoming": "Incoming",
+      "outgoing": "Outgoing"
+    },
+    "type": {
+      "rent": "Rent",
+      "lease": "Lease",
+      "energy_electricity": "Electricity",
+      "energy_gas": "Gas",
+      "energy_water": "Water",
+      "waste": "Waste",
+      "tax": "Tax",
+      "insurance": "Insurance",
+      "maintenance": "Maintenance",
+      "other": "Other"
+    },
+    "fields": {
+      "type": "Type",
+      "direction": "Direction",
+      "amount": "Amount",
+      "dueDate": "Due Date",
+      "paidDate": "Payment Date",
+      "status": "Status",
+      "period": "Period",
+      "notes": "Notes"
+    }
+  },
+  "inspections": {
+    "title": "Inspections",
+    "subtitle": "Overview of all inspections",
+    "addInspection": "Add Inspection",
+    "noInspections": "No inspections",
+    "status": {
+      "valid": "Valid",
+      "expiring_soon": "Expiring Soon",
+      "expired": "Expired"
+    },
+    "type": {
+      "chimney": "Chimney",
+      "gas_boiler": "Gas Boiler",
+      "electrical": "Electrical",
+      "fire_alarm": "Fire Alarm",
+      "fire_extinguisher": "Fire Extinguisher",
+      "elevator": "Elevator",
+      "other": "Other"
+    },
+    "fields": {
+      "type": "Type",
+      "lastDate": "Last Inspection Date",
+      "nextDueDate": "Next Due Date",
+      "status": "Status",
+      "provider": "Provider",
+      "cost": "Cost",
+      "notes": "Notes"
+    }
+  },
+  "insurance": {
+    "title": "Insurance",
+    "addInsurance": "Add Insurance",
+    "type": {
+      "property": "Property Insurance",
+      "liability": "Liability",
+      "natural_disaster": "Natural Disaster",
+      "other": "Other"
+    },
+    "fields": {
+      "provider": "Provider",
+      "policyNumber": "Policy Number",
+      "type": "Type",
+      "startDate": "Start Date",
+      "endDate": "End Date",
+      "annualPremium": "Annual Premium",
+      "notes": "Notes"
+    }
+  },
+  "contracts": {
+    "title": "Contracts",
+    "addContract": "Add Contract",
+    "type": {
+      "rental": "Rental Contract",
+      "lease": "Lease Contract",
+      "purchase": "Purchase Contract",
+      "other": "Other"
+    },
+    "fields": {
+      "type": "Type",
+      "startDate": "Start Date",
+      "endDate": "End Date",
+      "monthlyAmount": "Monthly Amount",
+      "notes": "Notes"
+    },
+    "status": {
+      "active": "Active",
+      "expiring_soon": "Expiring Soon",
+      "expired": "Expired"
+    }
+  },
+  "settings": {
+    "title": "Settings",
+    "subtitle": "Application settings"
+  },
+  "common": {
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "edit": "Edit",
+    "add": "Add",
+    "back": "Back",
+    "loading": "Loading...",
+    "error": "Error",
+    "success": "Success",
+    "confirm": "Confirm",
+    "search": "Search",
+    "filter": "Filter",
+    "all": "All",
+    "noData": "No data",
+    "currency": "CZK",
+    "area": "m²"
+  }
+}

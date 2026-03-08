@@ -1,0 +1,205 @@
+{
+  "nav": {
+    "dashboard": "Přehled",
+    "properties": "Nemovitosti",
+    "payments": "Platby",
+    "inspections": "Revize",
+    "settings": "Nastavení"
+  },
+  "dashboard": {
+    "title": "Přehled",
+    "subtitle": "Přehled vašich nemovitostí a nadcházejících událostí",
+    "stats": {
+      "totalProperties": "Celkem nemovitostí",
+      "activeContracts": "Aktivní smlouvy",
+      "pendingPayments": "Čekající platby",
+      "expiredInspections": "Expirované revize"
+    },
+    "upcomingEvents": "Nadcházející události",
+    "recentPayments": "Nedávné platby",
+    "propertyOverview": "Přehled nemovitostí"
+  },
+  "properties": {
+    "title": "Nemovitosti",
+    "subtitle": "Správa vašich nemovitostí",
+    "addProperty": "Přidat nemovitost",
+    "noProperties": "Žádné nemovitosti",
+    "type": {
+      "house": "Dům",
+      "land": "Pozemek"
+    },
+    "ownership": {
+      "owned": "Vlastní",
+      "rented": "V nájmu"
+    },
+    "fields": {
+      "name": "Název",
+      "type": "Typ",
+      "address": "Adresa",
+      "cadastralNumber": "Číslo LV",
+      "parcelNumbers": "Čísla parcel",
+      "ownership": "Vlastnictví",
+      "area": "Plocha (m²)",
+      "description": "Popis",
+      "notes": "Poznámky"
+    },
+    "tabs": {
+      "overview": "Přehled",
+      "tenants": "Nájemníci",
+      "payments": "Platby",
+      "inspections": "Revize",
+      "insurance": "Pojištění",
+      "contracts": "Smlouvy",
+      "documents": "Dokumenty"
+    }
+  },
+  "tenants": {
+    "title": "Nájemníci",
+    "addTenant": "Přidat nájemníka",
+    "noTenants": "Žádní nájemníci",
+    "type": {
+      "tenant": "Nájemník",
+      "lessee": "Pachtýř"
+    },
+    "fields": {
+      "name": "Jméno",
+      "email": "E-mail",
+      "phone": "Telefon",
+      "type": "Typ",
+      "contractStart": "Začátek smlouvy",
+      "contractEnd": "Konec smlouvy",
+      "monthlyRent": "Měsíční nájemné",
+      "deposit": "Kauce",
+      "notes": "Poznámky"
+    }
+  },
+  "payments": {
+    "title": "Platby",
+    "subtitle": "Přehled všech plateb",
+    "addPayment": "Přidat platbu",
+    "noPayments": "Žádné platby",
+    "status": {
+      "pending": "Čeká",
+      "paid": "Zaplaceno",
+      "overdue": "Po splatnosti"
+    },
+    "direction": {
+      "incoming": "Příjem",
+      "outgoing": "Výdaj"
+    },
+    "type": {
+      "rent": "Nájem",
+      "lease": "Pacht",
+      "energy_electricity": "Elektřina",
+      "energy_gas": "Plyn",
+      "energy_water": "Voda",
+      "waste": "Odpad",
+      "tax": "Daň",
+      "insurance": "Pojištění",
+      "maintenance": "Údržba",
+      "other": "Ostatní"
+    },
+    "fields": {
+      "type": "Typ",
+      "direction": "Směr",
+      "amount": "Částka",
+      "dueDate": "Datum splatnosti",
+      "paidDate": "Datum platby",
+      "status": "Stav",
+      "period": "Období",
+      "notes": "Poznámky"
+    }
+  },
+  "inspections": {
+    "title": "Revize",
+    "subtitle": "Přehled všech revizí",
+    "addInspection": "Přidat revizi",
+    "noInspections": "Žádné revize",
+    "status": {
+      "valid": "Platná",
+      "expiring_soon": "Blíží se konec",
+      "expired": "Expirovaná"
+    },
+    "type": {
+      "chimney": "Komín",
+      "gas_boiler": "Plynový kotel",
+      "electrical": "Elektroinstalace",
+      "fire_alarm": "Požární alarm",
+      "fire_extinguisher": "Hasicí přístroj",
+      "elevator": "Výtah",
+      "other": "Ostatní"
+    },
+    "fields": {
+      "type": "Typ",
+      "lastDate": "Datum poslední revize",
+      "nextDueDate": "Datum příští revize",
+      "status": "Stav",
+      "provider": "Poskytovatel",
+      "cost": "Cena",
+      "notes": "Poznámky"
+    }
+  },
+  "insurance": {
+    "title": "Pojištění",
+    "addInsurance": "Přidat pojištění",
+    "type": {
+      "property": "Pojištění nemovitosti",
+      "liability": "Odpovědnost",
+      "natural_disaster": "Přírodní katastrofa",
+      "other": "Ostatní"
+    },
+    "fields": {
+      "provider": "Pojišťovna",
+      "policyNumber": "Číslo pojistky",
+      "type": "Typ",
+      "startDate": "Datum začátku",
+      "endDate": "Datum konce",
+      "annualPremium": "Roční pojistné",
+      "notes": "Poznámky"
+    }
+  },
+  "contracts": {
+    "title": "Smlouvy",
+    "addContract": "Přidat smlouvu",
+    "type": {
+      "rental": "Nájemní smlouva",
+      "lease": "Pachtovní smlouva",
+      "purchase": "Kupní smlouva",
+      "other": "Ostatní"
+    },
+    "fields": {
+      "type": "Typ",
+      "startDate": "Datum začátku",
+      "endDate": "Datum konce",
+      "monthlyAmount": "Měsíční částka",
+      "notes": "Poznámky"
+    },
+    "status": {
+      "active": "Aktivní",
+      "expiring_soon": "Blíží se konec",
+      "expired": "Vypršela"
+    }
+  },
+  "settings": {
+    "title": "Nastavení",
+    "subtitle": "Nastavení aplikace"
+  },
+  "common": {
+    "save": "Uložit",
+    "cancel": "Zrušit",
+    "delete": "Smazat",
+    "edit": "Upravit",
+    "add": "Přidat",
+    "back": "Zpět",
+    "loading": "Načítání...",
+    "error": "Chyba",
+    "success": "Úspěch",
+    "confirm": "Potvrdit",
+    "search": "Hledat",
+    "filter": "Filtrovat",
+    "all": "Vše",
+    "noData": "Žádná data",
+    "currency": "Kč",
+    "area": "m²"
+  }
+}
