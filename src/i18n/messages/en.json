@@ -146,6 +146,15 @@
     "subtitle": "Overview of all payments",
     "addPayment": "Add Payment",
     "noPayments": "No payments",
+    "noResults": "No payments match the filter",
+    "summaryIncome": "Income",
+    "summaryExpenses": "Expenses",
+    "unpaidCount": "{count} unpaid",
+    "filterAllProperties": "All properties",
+    "filterAllTypes": "All types",
+    "filterAllStatuses": "All statuses",
+    "filterAllDirections": "Both directions",
+    "filterAllPeriods": "All periods",
     "status": {
       "pending": "Pending",
       "paid": "Paid",
@@ -168,11 +177,12 @@
       "other": "Other"
     },
     "fields": {
+      "property": "Property",
       "type": "Type",
       "direction": "Direction",
       "amount": "Amount",
       "dueDate": "Due Date",
-      "paidDate": "Payment Date",
+      "paidDate": "Paid",
       "status": "Status",
       "period": "Period",
       "notes": "Notes"
@@ -183,6 +193,13 @@
     "subtitle": "Overview of all inspections",
     "addInspection": "Add Inspection",
     "noInspections": "No inspections",
+    "noResults": "No inspections match the filter",
+    "summaryValid": "Valid",
+    "summaryExpiringSoon": "Expiring soon",
+    "summaryExpired": "Expired",
+    "filterAllProperties": "All properties",
+    "filterAllTypes": "All types",
+    "filterAllStatuses": "All statuses",
     "status": {
       "valid": "Valid",
       "expiring_soon": "Expiring Soon",
@@ -198,9 +215,10 @@
       "other": "Other"
     },
     "fields": {
+      "property": "Property",
       "type": "Type",
-      "lastDate": "Last Inspection Date",
-      "nextDueDate": "Next Due Date",
+      "lastDate": "Last Inspection",
+      "nextDueDate": "Next Due",
       "status": "Status",
       "provider": "Provider",
       "cost": "Cost",

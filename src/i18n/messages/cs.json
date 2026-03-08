@@ -146,6 +146,15 @@
     "subtitle": "Přehled všech plateb",
     "addPayment": "Přidat platbu",
     "noPayments": "Žádné platby",
+    "noResults": "Žádné platby nevyhovují filtru",
+    "summaryIncome": "Příjmy",
+    "summaryExpenses": "Výdaje",
+    "unpaidCount": "{count} neuhrazených",
+    "filterAllProperties": "Všechny nemovitosti",
+    "filterAllTypes": "Všechny typy",
+    "filterAllStatuses": "Všechny stavy",
+    "filterAllDirections": "Oba směry",
+    "filterAllPeriods": "Celé období",
     "status": {
       "pending": "Čeká",
       "paid": "Zaplaceno",
@@ -168,11 +177,12 @@
       "other": "Ostatní"
     },
     "fields": {
+      "property": "Nemovitost",
       "type": "Typ",
       "direction": "Směr",
       "amount": "Částka",
-      "dueDate": "Datum splatnosti",
-      "paidDate": "Datum platby",
+      "dueDate": "Splatnost",
+      "paidDate": "Zaplaceno",
       "status": "Stav",
       "period": "Období",
       "notes": "Poznámky"
@@ -183,6 +193,13 @@
     "subtitle": "Přehled všech revizí",
     "addInspection": "Přidat revizi",
     "noInspections": "Žádné revize",
+    "noResults": "Žádné revize nevyhovují filtru",
+    "summaryValid": "Platných",
+    "summaryExpiringSoon": "Blíží se",
+    "summaryExpired": "Expirovaných",
+    "filterAllProperties": "Všechny nemovitosti",
+    "filterAllTypes": "Všechny typy",
+    "filterAllStatuses": "Všechny stavy",
     "status": {
       "valid": "Platná",
       "expiring_soon": "Blíží se konec",
@@ -198,9 +215,10 @@
       "other": "Ostatní"
     },
     "fields": {
+      "property": "Nemovitost",
       "type": "Typ",
-      "lastDate": "Datum poslední revize",
-      "nextDueDate": "Datum příští revize",
+      "lastDate": "Poslední revize",
+      "nextDueDate": "Příští revize",
       "status": "Stav",
       "provider": "Poskytovatel",
       "cost": "Cena",
