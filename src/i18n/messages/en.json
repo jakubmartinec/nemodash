@@ -184,6 +184,18 @@
     "title": "Settings",
     "subtitle": "Application settings"
   },
+  "layout": {
+    "appName": "NemoDash",
+    "openMenu": "Open menu",
+    "closeMenu": "Close menu",
+    "notifications": "Notifications",
+    "notificationsCount": "{count} notifications",
+    "userMenu": "User menu",
+    "profile": "Profile",
+    "logout": "Sign out",
+    "home": "Home",
+    "propertyDetail": "Property detail"
+  },
   "common": {
     "save": "Save",
     "cancel": "Cancel",

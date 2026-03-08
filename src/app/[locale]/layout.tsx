@@ -2,6 +2,7 @@ import { NextIntlClientProvider } from "next-intl";
 import { getMessages } from "next-intl/server";
 import { notFound } from "next/navigation";
 import { routing } from "@/i18n/config";
+import AppShell from "@/components/layout/AppShell";
 
 export default async function LocaleLayout({
   children,
@@ -12,7 +13,6 @@ export default async function LocaleLayout({
 }) {
   const { locale } = await params;
 
-  // Ověř, že locale je platné
   if (!routing.locales.includes(locale as "cs" | "en")) {
     notFound();
   }
@@ -23,7 +23,9 @@ export default async function LocaleLayout({
     <html lang={locale}>
       <body className="antialiased">
         <NextIntlClientProvider messages={messages}>
-          {children}
+          <AppShell locale={locale}>
+            {children}
+          </AppShell>
         </NextIntlClientProvider>
       </body>
     </html>

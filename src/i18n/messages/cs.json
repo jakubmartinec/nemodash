@@ -184,6 +184,18 @@
     "title": "Nastavení",
     "subtitle": "Nastavení aplikace"
   },
+  "layout": {
+    "appName": "NemoDash",
+    "openMenu": "Otevřít menu",
+    "closeMenu": "Zavřít menu",
+    "notifications": "Upozornění",
+    "notificationsCount": "{count} upozornění",
+    "userMenu": "Uživatelské menu",
+    "profile": "Profil",
+    "logout": "Odhlásit se",
+    "home": "Domů",
+    "propertyDetail": "Detail nemovitosti"
+  },
   "common": {
     "save": "Uložit",
     "cancel": "Zrušit",
