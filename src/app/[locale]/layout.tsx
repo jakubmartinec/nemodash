@@ -3,6 +3,9 @@ import { getMessages } from "next-intl/server";
 import { notFound } from "next/navigation";
 import { routing } from "@/i18n/config";
 import AppShell from "@/components/layout/AppShell";
+import AIChatProvider from "@/components/ai-chat/AIChatProvider";
+import AIChatFAB from "@/components/ai-chat/AIChatFAB";
+import AIChatPanel from "@/components/ai-chat/AIChatPanel";
 
 export default async function LocaleLayout({
   children,
@@ -23,9 +26,13 @@ export default async function LocaleLayout({
     <html lang={locale}>
       <body className="antialiased">
         <NextIntlClientProvider messages={messages}>
-          <AppShell locale={locale}>
-            {children}
-          </AppShell>
+          <AIChatProvider>
+            <AppShell locale={locale}>
+              {children}
+            </AppShell>
+            <AIChatFAB />
+            <AIChatPanel />
+          </AIChatProvider>
         </NextIntlClientProvider>
       </body>
     </html>

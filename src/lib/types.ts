@@ -27,6 +27,11 @@ export interface Tenant {
   monthlyRent: number;
   deposit?: number;
   notes?: string;
+  advances?: {
+    water?: number;        // měsíční záloha na vodu v Kč
+    gas?: number;          // měsíční záloha na plyn v Kč
+    electricity?: number;  // měsíční záloha na elektřinu v Kč
+  };
 }
 
 // Typy plateb

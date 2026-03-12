@@ -153,6 +153,7 @@ export const mockTenants: Tenant[] = [
     monthlyRent: 12500,
     deposit: 25000,
     notes: "Dlouhodobý nájemník, platí spolehlivě",
+    advances: { water: 750, gas: 500, electricity: 600 },
   },
   {
     id: "tenant-2",
@@ -166,6 +167,7 @@ export const mockTenants: Tenant[] = [
     monthlyRent: 10800,
     deposit: 21600,
     notes: "Druhá bytová jednotka",
+    advances: { water: 750, gas: 500, electricity: 600 },
   },
   {
     id: "tenant-3",
