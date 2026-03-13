@@ -115,3 +115,25 @@ export interface Contract {
   documentUrl?: string;
   notes?: string;
 }
+
+// Kategorie dokumentu
+export type DocumentCategory =
+  | "contract"
+  | "inspection"
+  | "insurance"
+  | "invoice"
+  | "photo"
+  | "other";
+
+// Dokument
+export interface PropertyDocument {
+  id: string;
+  propertyId: string;
+  name: string;
+  category: DocumentCategory;
+  relatedId?: string; // ID smlouvy, revize nebo pojistky
+  uploadedAt: string;
+  size?: number; // bajty
+  mimeType?: string;
+  notes?: string;
+}

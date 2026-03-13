@@ -12,7 +12,7 @@ import {
   Edit2,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
-import type { Property, Tenant, Payment, Inspection, Insurance, Contract } from "@/lib/types";
+import type { Property, Tenant, Payment, Inspection, Insurance, Contract, PropertyDocument } from "@/lib/types";
 import OverviewTab from "./detail/OverviewTab";
 import TenantsTab from "./detail/TenantsTab";
 import PaymentsTab from "./detail/PaymentsTab";
@@ -28,6 +28,7 @@ export interface PropertyDetailProps {
   inspections: Inspection[];
   insurances: Insurance[];
   contracts: Contract[];
+  documents: PropertyDocument[];
 }
 
 type TabKey = "overview" | "tenants" | "payments" | "inspections" | "insurance" | "documents";
@@ -49,6 +50,7 @@ export default function PropertyDetail({
   inspections,
   insurances,
   contracts,
+  documents,
 }: PropertyDetailProps) {
   const t = useTranslations("properties");
   const router = useRouter();
@@ -189,7 +191,7 @@ export default function PropertyDetail({
           {activeTab === "payments" && <PaymentsTab payments={payments} />}
           {activeTab === "inspections" && <InspectionsTab inspections={inspections} />}
           {activeTab === "insurance" && <InsuranceTab insurances={insurances} />}
-          {activeTab === "documents" && <DocumentsTab />}
+          {activeTab === "documents" && <DocumentsTab documents={documents} />}
         </div>
       </div>
     </div>

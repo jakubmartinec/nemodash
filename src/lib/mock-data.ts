@@ -1,7 +1,7 @@
 // Mock data pro vývoj — bude nahrazeno Firebase Firestore
 // Dnešní datum: 2026-03-08
 
-import { Property, Tenant, Payment, Inspection, Insurance, Contract } from "./types";
+import { Property, Tenant, Payment, Inspection, Insurance, Contract, PropertyDocument } from "./types";
 
 // ─── NEMOVITOSTI ────────────────────────────────────────────────────────────
 
@@ -715,6 +715,150 @@ export const mockContracts: Contract[] = [
   },
 ];
 
+// ─── DOKUMENTY ───────────────────────────────────────────────────────────────
+
+export const mockDocuments: PropertyDocument[] = [
+  // prop-1 — Dům Nerudova 435
+  {
+    id: "doc-1",
+    propertyId: "prop-1",
+    name: "Nájemní smlouva — Jaroslav Novotný.pdf",
+    category: "contract",
+    relatedId: "contract-1",
+    uploadedAt: "2023-02-01",
+    size: 245760,
+    mimeType: "application/pdf",
+  },
+  {
+    id: "doc-2",
+    propertyId: "prop-1",
+    name: "Nájemní smlouva — Petra Horáčková.pdf",
+    category: "contract",
+    relatedId: "contract-2",
+    uploadedAt: "2024-06-01",
+    size: 198400,
+    mimeType: "application/pdf",
+  },
+  {
+    id: "doc-3",
+    propertyId: "prop-1",
+    name: "Revizní zpráva elektroinstalace 2021.pdf",
+    category: "inspection",
+    relatedId: "insp-3",
+    uploadedAt: "2021-06-12",
+    size: 512000,
+    mimeType: "application/pdf",
+    notes: "5letá revize — příští termín 6/2026",
+  },
+  {
+    id: "doc-4",
+    propertyId: "prop-1",
+    name: "Pojistná smlouva Kooperativa 2024.pdf",
+    category: "insurance",
+    relatedId: "ins-1",
+    uploadedAt: "2024-02-03",
+    size: 384000,
+    mimeType: "application/pdf",
+  },
+  {
+    id: "doc-5",
+    propertyId: "prop-1",
+    name: "Faktura SčVK — voda Q1 2026.pdf",
+    category: "invoice",
+    uploadedAt: "2026-03-10",
+    size: 89600,
+    mimeType: "application/pdf",
+    notes: "Vyúčtování vodného a stočného Q1 2026",
+  },
+  {
+    id: "doc-6",
+    propertyId: "prop-1",
+    name: "Foto — střecha po opravě.jpg",
+    category: "photo",
+    uploadedAt: "2025-05-16",
+    size: 3145728,
+    mimeType: "image/jpeg",
+    notes: "Dokumentace stavu střechy po opravě klempířem",
+  },
+  {
+    id: "doc-7",
+    propertyId: "prop-1",
+    name: "Servisní protokol — plynový kotel 2025.pdf",
+    category: "inspection",
+    relatedId: "insp-2",
+    uploadedAt: "2025-11-21",
+    size: 156672,
+    mimeType: "application/pdf",
+  },
+
+  // prop-2 — Dům Besední 25
+  {
+    id: "doc-8",
+    propertyId: "prop-2",
+    name: "Nájemní smlouva — Martin Šimánek.pdf",
+    category: "contract",
+    relatedId: "contract-3",
+    uploadedAt: "2022-09-01",
+    size: 215040,
+    mimeType: "application/pdf",
+  },
+  {
+    id: "doc-9",
+    propertyId: "prop-2",
+    name: "Pojistná smlouva ČP 2024.pdf",
+    category: "insurance",
+    relatedId: "ins-2",
+    uploadedAt: "2024-03-04",
+    size: 327680,
+    mimeType: "application/pdf",
+  },
+  {
+    id: "doc-10",
+    propertyId: "prop-2",
+    name: "Revize elektroinstalace 2020 — PROŠLÁ.pdf",
+    category: "inspection",
+    relatedId: "insp-7",
+    uploadedAt: "2020-04-20",
+    size: 471040,
+    mimeType: "application/pdf",
+    notes: "POZOR: Revize je prošlá, nutno objednat novou",
+  },
+
+  // prop-3 — Dům Strašín 38
+  {
+    id: "doc-11",
+    propertyId: "prop-3",
+    name: "Nájemní smlouva — Lucie Brabcová.pdf",
+    category: "contract",
+    relatedId: "contract-4",
+    uploadedAt: "2024-01-05",
+    size: 228352,
+    mimeType: "application/pdf",
+  },
+  {
+    id: "doc-12",
+    propertyId: "prop-3",
+    name: "Faktura za výměnu oken 2025.pdf",
+    category: "invoice",
+    uploadedAt: "2025-10-06",
+    size: 102400,
+    mimeType: "application/pdf",
+    notes: "3 ks okna — dodavatel Okna Plus s.r.o.",
+  },
+
+  // prop-5 — Pozemek Nový Bor — pole
+  {
+    id: "doc-13",
+    propertyId: "prop-5",
+    name: "Pachtovní smlouva — ZD Nový Bor 2020.pdf",
+    category: "contract",
+    relatedId: "contract-7",
+    uploadedAt: "2020-04-03",
+    size: 307200,
+    mimeType: "application/pdf",
+  },
+];
+
 // ─── HELPER FUNKCE ───────────────────────────────────────────────────────────
 
 export function getPropertyById(id: string): Property | undefined {
@@ -743,6 +887,12 @@ export function getContractsByProperty(propertyId: string): Contract[] {
 
 export function getTenantById(id: string): Tenant | undefined {
   return mockTenants.find((t) => t.id === id);
+}
+
+export function getDocumentsByProperty(propertyId: string): PropertyDocument[] {
+  return mockDocuments
+    .filter((d) => d.propertyId === propertyId)
+    .sort((a, b) => b.uploadedAt.localeCompare(a.uploadedAt));
 }
 
 // Vrátí platby podle stavu

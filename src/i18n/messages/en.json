@@ -113,6 +113,17 @@
     "noContracts": "No contracts",
     "noTenantsForProp": "No tenants or lessees",
     "documentsPlaceholder": "Documents will be available after connecting the application to a file storage service.",
+    "noDocumentsForProp": "No documents yet. Upload the first file.",
+    "uploadDocument": "Upload Document",
+    "documentCount": "{count, plural, one {# document} other {# documents}}",
+    "documentCategory": {
+      "contract": "Contract",
+      "inspection": "Inspection",
+      "insurance": "Insurance",
+      "invoice": "Invoice",
+      "photo": "Photo",
+      "other": "Other"
+    },
     "contractMonthly": "monthly",
     "deposit": "Deposit",
     "annualPremium": "Annual premium",

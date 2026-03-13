@@ -113,6 +113,17 @@
     "noContracts": "Žádné smlouvy",
     "noTenantsForProp": "Žádní nájemníci / pachtýři",
     "documentsPlaceholder": "Dokumenty budou k dispozici po napojení aplikace na úložiště souborů.",
+    "noDocumentsForProp": "Zatím žádné dokumenty. Nahrajte první soubor.",
+    "uploadDocument": "Nahrát dokument",
+    "documentCount": "{count, plural, one {# dokument} few {# dokumenty} other {# dokumentů}}",
+    "documentCategory": {
+      "contract": "Smlouva",
+      "inspection": "Revize",
+      "insurance": "Pojistka",
+      "invoice": "Faktura",
+      "photo": "Fotografie",
+      "other": "Ostatní"
+    },
     "contractMonthly": "měsíčně",
     "deposit": "Kauce",
     "annualPremium": "Roční pojistné",
