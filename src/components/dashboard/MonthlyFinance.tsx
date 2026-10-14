@@ -1,6 +1,7 @@
 import { useTranslations } from "next-intl";
 import { TrendingUp, TrendingDown, Minus } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { formatCZK } from "@/lib/format";
 
 export interface FinanceLine {
   labelKey: string;
@@ -14,14 +15,6 @@ export interface MonthlyFinanceData {
 
 interface MonthlyFinanceProps {
   data: MonthlyFinanceData;
-}
-
-function formatCZK(amount: number): string {
-  return new Intl.NumberFormat("cs-CZ", {
-    style: "currency",
-    currency: "CZK",
-    maximumFractionDigits: 0,
-  }).format(amount);
 }
 
 function FinanceSection({

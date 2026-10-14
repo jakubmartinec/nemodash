@@ -42,15 +42,3 @@ export interface InvoiceData {
   vs: string;
   bankAccount: string;
 }
-
-export interface SettlementData {
-  tenantName: string;
-  monthlyAdvance: number;
-  months: number;
-  totalAdvances: number;
-  actualCost: number;
-  difference: number;
-  isUnderpaid: boolean;
-  suggestedNewAdvance: number;
-  newSupplierAdvance: number;
-}

@@ -12,7 +12,7 @@ import {
   Edit2,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
-import type { Property, Tenant, Payment, Inspection, Insurance, Contract, PropertyDocument } from "@/lib/types";
+import type { Property, Tenant, Payment, Inspection, Insurance, Contract, PropertyDocument, UtilitySettlement } from "@/lib/types";
 import OverviewTab from "./detail/OverviewTab";
 import TenantsTab from "./detail/TenantsTab";
 import PaymentsTab from "./detail/PaymentsTab";
@@ -29,6 +29,7 @@ export interface PropertyDetailProps {
   insurances: Insurance[];
   contracts: Contract[];
   documents: PropertyDocument[];
+  settlements: UtilitySettlement[];
 }
 
 type TabKey = "overview" | "tenants" | "payments" | "inspections" | "insurance" | "documents";
@@ -51,6 +52,7 @@ export default function PropertyDetail({
   insurances,
   contracts,
   documents,
+  settlements,
 }: PropertyDetailProps) {
   const t = useTranslations("properties");
   const router = useRouter();
@@ -131,7 +133,7 @@ export default function PropertyDetail({
           {property.cadastralNumber && (
             <div className="flex items-center gap-1.5 text-sm text-muted-foreground">
               <FileText className="h-3.5 w-3.5 shrink-0" />
-              LV {property.cadastralNumber}
+              {property.cadastralNumber}
               {property.parcelNumbers?.length ? (
                 <span className="text-muted-foreground/60">
                   · {property.parcelNumbers.join(", ")}
@@ -186,7 +188,7 @@ export default function PropertyDetail({
             />
           )}
           {activeTab === "tenants" && (
-            <TenantsTab tenants={tenants} contracts={contracts} />
+            <TenantsTab locale={locale} tenants={tenants} settlements={settlements} />
           )}
           {activeTab === "payments" && <PaymentsTab payments={payments} />}
           {activeTab === "inspections" && <InspectionsTab inspections={inspections} />}

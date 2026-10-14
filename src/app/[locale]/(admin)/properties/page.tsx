@@ -8,8 +8,9 @@ import {
 } from "@/lib/mock-data";
 import PropertiesList from "@/components/properties/PropertiesList";
 import type { PropertyCardData } from "@/components/properties/PropertyCard";
+import { getToday } from "@/lib/constants";
 
-const TODAY = new Date("2026-03-08");
+const TODAY = getToday();
 const INSURANCE_WARNING_DAYS = 90;
 
 export default async function PropertiesPage({

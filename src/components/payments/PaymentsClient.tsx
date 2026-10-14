@@ -5,6 +5,7 @@ import { useTranslations } from "next-intl";
 import { ArrowDownLeft, ArrowUpRight, ChevronsUpDown, ChevronUp, ChevronDown } from "lucide-react";
 import { cn } from "@/lib/utils";
 import type { Payment, Property, PaymentType, PaymentStatus, PaymentDirection } from "@/lib/types";
+import { formatCZK, formatDate } from "@/lib/format";
 
 interface PaymentsClientProps {
   payments: Payment[];
@@ -19,22 +20,6 @@ const STATUS_PILL = {
   pending: "bg-yellow-50 text-yellow-700 border-yellow-200",
   overdue: "bg-red-50 text-red-700 border-red-200",
 } as const;
-
-function formatCZK(amount: number) {
-  return new Intl.NumberFormat("cs-CZ", {
-    style: "currency",
-    currency: "CZK",
-    maximumFractionDigits: 0,
-  }).format(amount);
-}
-
-function formatDate(dateStr: string) {
-  return new Intl.DateTimeFormat("cs-CZ", {
-    day: "numeric",
-    month: "short",
-    year: "numeric",
-  }).format(new Date(dateStr));
-}
 
 function formatPeriodLabel(ym: string): string {
   const [year, month] = ym.split("-");

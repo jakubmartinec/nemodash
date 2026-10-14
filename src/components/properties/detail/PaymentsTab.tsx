@@ -4,27 +4,11 @@ import { useState, useMemo } from "react";
 import { useTranslations } from "next-intl";
 import { ArrowDownLeft, ArrowUpRight } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { STATUS_COLORS } from "@/lib/constants";
 import type { Payment, PaymentStatus } from "@/lib/types";
+import { formatCZK, formatDate } from "@/lib/format";
 
 interface PaymentsTabProps {
   payments: Payment[];
-}
-
-function formatCZK(amount: number) {
-  return new Intl.NumberFormat("cs-CZ", {
-    style: "currency",
-    currency: "CZK",
-    maximumFractionDigits: 0,
-  }).format(amount);
-}
-
-function formatDate(dateStr: string) {
-  return new Intl.DateTimeFormat("cs-CZ", {
-    day: "numeric",
-    month: "short",
-    year: "numeric",
-  }).format(new Date(dateStr));
 }
 
 const STATUS_PILL = {

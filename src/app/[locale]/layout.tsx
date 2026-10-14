@@ -2,11 +2,8 @@ import { NextIntlClientProvider } from "next-intl";
 import { getMessages } from "next-intl/server";
 import { notFound } from "next/navigation";
 import { routing } from "@/i18n/config";
-import AppShell from "@/components/layout/AppShell";
-import AIChatProvider from "@/components/ai-chat/AIChatProvider";
-import AIChatFAB from "@/components/ai-chat/AIChatFAB";
-import AIChatPanel from "@/components/ai-chat/AIChatPanel";
 
+// Společný základ pro správce i nájemnický portál; rozložení stránek řeší skupiny (admin) a portal
 export default async function LocaleLayout({
   children,
   params,
@@ -25,15 +22,7 @@ export default async function LocaleLayout({
   return (
     <html lang={locale}>
       <body className="antialiased">
-        <NextIntlClientProvider messages={messages}>
-          <AIChatProvider>
-            <AppShell locale={locale}>
-              {children}
-            </AppShell>
-            <AIChatFAB />
-            <AIChatPanel />
-          </AIChatProvider>
-        </NextIntlClientProvider>
+        <NextIntlClientProvider messages={messages}>{children}</NextIntlClientProvider>
       </body>
     </html>
   );

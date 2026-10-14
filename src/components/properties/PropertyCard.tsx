@@ -66,7 +66,6 @@ function StatusPip({
 
 export default function PropertyCard({ data, locale }: PropertyCardProps) {
   const t = useTranslations("properties");
-  const tCommon = useTranslations("common");
   const { property, tenantCount, lesseeCount, paymentStatus, inspectionStatus, insuranceStatus } = data;
 
   const Icon = property.type === "house" ? Building2 : Sprout;
@@ -124,7 +123,7 @@ export default function PropertyCard({ data, locale }: PropertyCardProps) {
         {property.cadastralNumber && (
           <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
             <FileText className="h-3.5 w-3.5 shrink-0" />
-            <span>LV {property.cadastralNumber}</span>
+            <span>{property.cadastralNumber}</span>
             {property.parcelNumbers && property.parcelNumbers.length > 0 && (
               <span className="truncate text-muted-foreground/70">
                 · {property.parcelNumbers.join(", ")}

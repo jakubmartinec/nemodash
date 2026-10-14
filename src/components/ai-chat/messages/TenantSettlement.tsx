@@ -1,7 +1,10 @@
-import { useTranslations } from "next-intl";
-import { TrendingUp, TrendingDown, Lightbulb } from "lucide-react";
-import type { ChatMessage, SettlementData } from "@/lib/ai-chat/types";
-import { formatCZK } from "@/lib/ai-chat/engine";
+import { useLocale, useTranslations } from "next-intl";
+import type { ChatMessage } from "@/lib/ai-chat/types";
+import type { UtilitySettlement } from "@/lib/types";
+import { computeSettlement } from "@/lib/settlement";
+import { formatCZK, formatNumber } from "@/lib/format";
+import { getTenantById } from "@/lib/mock-data";
+import { cn } from "@/lib/utils";
 
 interface TenantSettlementProps {
   message: ChatMessage;
@@ -9,14 +12,10 @@ interface TenantSettlementProps {
 
 export default function TenantSettlement({ message }: TenantSettlementProps) {
   const t = useTranslations("aiChat");
-  const data = message.data as unknown as {
-    settlement: SettlementData;
-    invoiceAddress: string;
-  };
-  if (!data) return null;
-
-  const { settlement } = data;
-  const monthlyActual = Math.round(settlement.actualCost / settlement.months);
+  const tSet = useTranslations("settlement");
+  const locale = useLocale();
+  const settlements = (message.data?.settlements ?? []) as UtilitySettlement[];
+  if (settlements.length === 0) return null;
 
   return (
     <div className="flex items-start gap-2">
@@ -28,73 +27,38 @@ export default function TenantSettlement({ message }: TenantSettlementProps) {
       </div>
       <div className="flex-1 min-w-0">
         <p className="text-sm text-gray-600 mb-2">
-          {t("settlementDescription", {
-            name: settlement.tenantName,
-            amount: formatCZK(settlement.monthlyAdvance),
-            months: settlement.months,
-          })}
+          {t("settlementDescription", { count: settlements.length })}
         </p>
-
-        <div className="rounded-xl border border-gray-200 bg-white overflow-hidden">
-          <div className="px-4 py-3 border-b border-gray-100">
-            <h3 className="text-sm font-semibold text-gray-900">{t("settlementTitle")}</h3>
-          </div>
-
-          <div className="px-4 py-3 space-y-2">
-            <SettlRow label={t("monthlyAdvance")} value={formatCZK(settlement.monthlyAdvance)} />
-            <SettlRow label={t("monthCount")} value={`${settlement.months} měsíců`} />
-            <SettlRow label={t("totalAdvances")} value={formatCZK(settlement.totalAdvances)} />
-            <SettlRow label={t("actualCost")} value={formatCZK(settlement.actualCost)} />
-          </div>
-
-          {/* Nedoplatek / Přeplatek */}
-          <div
-            className={`mx-4 mb-3 rounded-lg p-3 flex items-center justify-between ${
-              settlement.isUnderpaid ? "bg-red-50 border border-red-200" : "bg-green-50 border border-green-200"
-            }`}
-          >
-            <div className="flex items-center gap-2">
-              {settlement.isUnderpaid ? (
-                <TrendingUp className="w-4 h-4 text-red-500 shrink-0" />
-              ) : (
-                <TrendingDown className="w-4 h-4 text-green-600 shrink-0" />
-              )}
-              <span className={`text-sm font-medium ${settlement.isUnderpaid ? "text-red-700" : "text-green-700"}`}>
-                {settlement.isUnderpaid ? t("underpayment") : t("overpayment")}
-              </span>
-            </div>
-            <span className={`text-sm font-bold ${settlement.isUnderpaid ? "text-red-600" : "text-green-600"}`}>
-              {settlement.isUnderpaid ? "+" : "-"}
-              {formatCZK(Math.abs(settlement.difference))}
-            </span>
-          </div>
-
-          {/* Tip */}
-          <div className="mx-4 mb-4 rounded-lg p-3 bg-amber-50 border border-amber-200">
-            <div className="flex items-center gap-1.5 mb-1">
-              <Lightbulb className="w-3.5 h-3.5 text-amber-600 shrink-0" />
-              <span className="text-xs font-semibold text-amber-800">{t("tip")}</span>
-            </div>
-            <p className="text-xs text-amber-700">
-              {t("tipText", {
-                monthlyActual: monthlyActual.toLocaleString("cs-CZ"),
-                newSupplierAdvance: settlement.newSupplierAdvance.toLocaleString("cs-CZ"),
-                oldAdvance: settlement.monthlyAdvance.toLocaleString("cs-CZ"),
-                newAdvance: settlement.suggestedNewAdvance.toLocaleString("cs-CZ"),
-              })}
-            </p>
-          </div>
+        <div className="rounded-xl border border-gray-200 bg-white divide-y divide-gray-100">
+          {settlements.map((s) => {
+            const r = computeSettlement(s);
+            return (
+              <div key={s.id} className="px-4 py-3 space-y-1">
+                <div className="flex items-baseline justify-between gap-2">
+                  <p className="text-sm font-semibold text-gray-900">{getTenantById(s.tenantId)?.name}</p>
+                  <p
+                    className={cn(
+                      "text-sm font-bold tabular-nums",
+                      r.outcome === "underpaid" ? "text-danger" : r.outcome === "overpaid" ? "text-success" : ""
+                    )}
+                  >
+                    {r.outcome === "underpaid" ? "+" : r.outcome === "overpaid" ? "−" : ""}
+                    {formatCZK(Math.abs(r.balance), locale, true)}
+                  </p>
+                </div>
+                <p className="text-xs text-gray-500">
+                  {t("settlementRow", {
+                    consumption: formatNumber(r.consumption, locale),
+                    cost: formatCZK(r.cost, locale, true),
+                    advances: formatCZK(r.advancesPaid, locale),
+                  })}
+                </p>
+                <p className="text-xs text-gray-500">{tSet(r.outcome)}</p>
+              </div>
+            );
+          })}
         </div>
       </div>
-    </div>
-  );
-}
-
-function SettlRow({ label, value }: { label: string; value: string }) {
-  return (
-    <div className="flex items-center justify-between gap-2">
-      <span className="text-xs text-gray-500">{label}</span>
-      <span className="text-xs text-gray-800 font-medium">{value}</span>
     </div>
   );
 }

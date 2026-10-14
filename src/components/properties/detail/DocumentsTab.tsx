@@ -14,6 +14,7 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import type { PropertyDocument, DocumentCategory } from "@/lib/types";
+import { formatDate } from "@/lib/format";
 
 interface DocumentsTabProps {
   documents: PropertyDocument[];
@@ -45,14 +46,6 @@ function formatFileSize(bytes?: number): string {
   if (bytes < 1024) return `${bytes} B`;
   if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(0)} kB`;
   return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
-}
-
-function formatDate(dateStr: string) {
-  return new Intl.DateTimeFormat("cs-CZ", {
-    day: "numeric",
-    month: "short",
-    year: "numeric",
-  }).format(new Date(dateStr));
 }
 
 export default function DocumentsTab({ documents }: DocumentsTabProps) {

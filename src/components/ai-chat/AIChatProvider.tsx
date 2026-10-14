@@ -11,8 +11,8 @@ import {
 import { useTranslations } from "next-intl";
 import type { ChatMessage } from "@/lib/ai-chat/types";
 import { waterInvoiceScenario } from "@/lib/ai-chat/scenarios";
-import { computeSettlement, PHASE1_DELAYS, PHASE2_DELAYS } from "@/lib/ai-chat/engine";
-import { getTenantsByProperty, getPropertyById } from "@/lib/mock-data";
+import { PHASE1_DELAYS, PHASE2_DELAYS } from "@/lib/ai-chat/engine";
+import { getPropertyById, getSettlementsByProperty } from "@/lib/mock-data";
 
 interface AIChatContextValue {
   messages: ChatMessage[];
@@ -28,7 +28,7 @@ interface AIChatContextValue {
   confirmMatch: (propertyId: string) => void;
   openSelector: () => void;
   closeSelector: () => void;
-  saveAll: (propertyName: string) => void;
+  saveAll: () => void;
 }
 
 const AIChatContext = createContext<AIChatContextValue | null>(null);
@@ -101,11 +101,7 @@ export default function AIChatProvider({ children }: AIChatProviderProps) {
       }
 
       const scenario = waterInvoiceScenario;
-      const { invoiceData, matchedPropertyId: propId, newSupplierAdvance } = scenario;
-
-      // Najdi prvního nájemníka s advances.water na prop-1
-      const tenants = getTenantsByProperty(propId);
-      const tenant = tenants.find((ten) => ten.advances?.water) ?? tenants[0];
+      const { invoiceData, matchedPropertyId: propId } = scenario;
       const property = getPropertyById(propId);
 
       setIsTyping(true);
@@ -137,16 +133,6 @@ export default function AIChatProvider({ children }: AIChatProviderProps) {
             });
             setIsTyping(false);
             setMatchedPropertyId(propId);
-
-            // Ulož data pro fázi 2
-            if (tenant) {
-              const settlement = computeSettlement(invoiceData, tenant, newSupplierAdvance);
-              phase2DataRef.current = {
-                settlement,
-                property,
-                invoiceData,
-              };
-            }
           }
         }, step.delay);
         timeoutsRef.current.push(tid);
@@ -155,10 +141,6 @@ export default function AIChatProvider({ children }: AIChatProviderProps) {
     [addMsg, t]
   );
 
-  // Ref pro data fáze 2 (po potvrzení)
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const phase2DataRef = useRef<any>(null);
-
   const confirmMatch = useCallback(
     (propertyId: string) => {
       if (matchConfirmed) return;
@@ -166,17 +148,21 @@ export default function AIChatProvider({ children }: AIChatProviderProps) {
       setMatchedPropertyId(propertyId);
       setSelectorOpen(false);
 
-      const scenario = waterInvoiceScenario;
-      const { invoiceData, newSupplierAdvance } = scenario;
-      const tenants = getTenantsByProperty(propertyId);
-      const tenant = tenants.find((ten) => ten.advances?.water) ?? tenants[0];
+      const { invoiceData } = waterInvoiceScenario;
       const property = getPropertyById(propertyId);
+      // Vyúčtování nájemníků k této faktuře (rozpočet podle podružných vodoměrů)
+      const settlements = getSettlementsByProperty(propertyId).filter(
+        (s) => s.invoiceNumber === invoiceData.invoiceNumber
+      );
 
-      const settlement =
-        phase2DataRef.current?.settlement ??
-        (tenant ? computeSettlement(invoiceData, tenant, newSupplierAdvance) : null);
-
-      if (!settlement || !property) return;
+      if (!property || settlements.length === 0) {
+        addMsg({
+          role: "assistant",
+          type: "text",
+          content: t("noTenantSettlement", { property: property?.name ?? propertyId }),
+        });
+        return;
+      }
 
       setIsTyping(true);
 
@@ -185,10 +171,7 @@ export default function AIChatProvider({ children }: AIChatProviderProps) {
         addMsg({
           role: "assistant",
           type: "tenant_settlement",
-          data: {
-            settlement: settlement as Record<string, unknown>,
-            invoiceAddress: invoiceData.address,
-          } as Record<string, unknown>,
+          data: { settlements } as unknown as Record<string, unknown>,
         });
       }, PHASE2_DELAYS.settlement);
 
@@ -201,7 +184,7 @@ export default function AIChatProvider({ children }: AIChatProviderProps) {
             propertyId,
             propertyName: property.name,
             invoice: invoiceData as unknown as Record<string, unknown>,
-            settlement: settlement as Record<string, unknown>,
+            settlements: settlements as unknown as Record<string, unknown>,
           },
         });
         setIsTyping(false);
@@ -209,7 +192,7 @@ export default function AIChatProvider({ children }: AIChatProviderProps) {
 
       timeoutsRef.current.push(t1, t2);
     },
-    [matchConfirmed, addMsg]
+    [matchConfirmed, addMsg, t]
   );
 
   const openSelector = useCallback(() => {
@@ -220,19 +203,9 @@ export default function AIChatProvider({ children }: AIChatProviderProps) {
     setSelectorOpen(false);
   }, []);
 
-  const saveAll = useCallback(
-    (propertyName: string) => {
-      setSaved(true);
-      setTimeout(() => {
-        addMsg({
-          role: "assistant",
-          type: "text",
-          content: t("saved", { property: propertyName }),
-        });
-      }, 300);
-    },
-    [addMsg, t]
-  );
+  const saveAll = useCallback(() => {
+    setSaved(true);
+  }, []);
 
   const value: AIChatContextValue = {
     messages,

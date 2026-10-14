@@ -1,28 +1,19 @@
+"use client";
+
+import { useState } from "react";
+import Link from "next/link";
 import { useTranslations } from "next-intl";
-import { Mail, Phone, Banknote, Calendar } from "lucide-react";
+import { Mail, Phone, Link2, Check, ExternalLink } from "lucide-react";
 import { cn } from "@/lib/utils";
-import type { Tenant, Contract } from "@/lib/types";
+import type { Tenant, UtilitySettlement } from "@/lib/types";
+import SettlementCard from "@/components/settlements/SettlementCard";
 import { getContractStatus } from "@/lib/constants";
+import { formatCZK, formatDate } from "@/lib/format";
 
 interface TenantsTabProps {
+  locale: string;
   tenants: Tenant[];
-  contracts: Contract[];
-}
-
-function formatCZK(amount: number) {
-  return new Intl.NumberFormat("cs-CZ", {
-    style: "currency",
-    currency: "CZK",
-    maximumFractionDigits: 0,
-  }).format(amount);
-}
-
-function formatDate(dateStr: string) {
-  return new Intl.DateTimeFormat("cs-CZ", {
-    day: "numeric",
-    month: "short",
-    year: "numeric",
-  }).format(new Date(dateStr));
+  settlements: UtilitySettlement[];
 }
 
 const CONTRACT_STATUS_STYLES = {
@@ -31,10 +22,45 @@ const CONTRACT_STATUS_STYLES = {
   expired: "bg-red-50 text-red-700 border-red-200",
 } as const;
 
-export default function TenantsTab({ tenants, contracts }: TenantsTabProps) {
+// Odkaz do nájemnického portálu: zkopírovat / otevřít
+function PortalLink({ href }: { href: string }) {
+  const t = useTranslations("tenantPortal");
+  const [copied, setCopied] = useState(false);
+
+  async function copy() {
+    await navigator.clipboard.writeText(new URL(href, window.location.origin).toString());
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  }
+
+  return (
+    <div className="flex flex-wrap items-center gap-2">
+      <span className="text-xs text-muted-foreground">{t("link")}</span>
+      <button
+        type="button"
+        onClick={copy}
+        className="inline-flex items-center gap-1.5 rounded-md border border-border px-2.5 py-1 text-xs hover:bg-muted"
+      >
+        {copied ? <Check className="h-3.5 w-3.5 text-success" /> : <Link2 className="h-3.5 w-3.5" />}
+        {copied ? t("copied") : t("copy")}
+      </button>
+      <Link
+        href={href}
+        target="_blank"
+        className="inline-flex items-center gap-1.5 rounded-md border border-border px-2.5 py-1 text-xs hover:bg-muted"
+      >
+        <ExternalLink className="h-3.5 w-3.5" />
+        {t("open")}
+      </Link>
+    </div>
+  );
+}
+
+export default function TenantsTab({ locale, tenants, settlements }: TenantsTabProps) {
   const t = useTranslations("properties");
   const tTen = useTranslations("tenants");
   const tCon = useTranslations("contracts");
+  const tPortal = useTranslations("tenantPortal");
 
   if (tenants.length === 0) {
     return (
@@ -47,7 +73,7 @@ export default function TenantsTab({ tenants, contracts }: TenantsTabProps) {
   return (
     <div className="space-y-4">
       {tenants.map((tenant) => {
-        const contract = contracts.find((c) => c.tenantId === tenant.id);
+        const tenantSettlements = settlements.filter((s) => s.tenantId === tenant.id);
         const contractStatus = getContractStatus(tenant.contractEnd);
         const statusLabel = tCon(`status.${contractStatus}`);
 
@@ -120,6 +146,21 @@ export default function TenantsTab({ tenants, contracts }: TenantsTabProps) {
                 </div>
               )}
             </div>
+
+            {/* Vyúčtování záloh + odkaz pro nájemníka */}
+            {(tenantSettlements.length > 0 || tenant.portalToken) && (
+              <div className="border-t border-border pt-3 space-y-3">
+                {tenantSettlements.length > 0 && (
+                  <div className="space-y-3">
+                    <p className="text-xs font-medium text-muted-foreground">{tPortal("settlements")}</p>
+                    {tenantSettlements.map((s) => (
+                      <SettlementCard key={s.id} settlement={s} audience="owner" compact />
+                    ))}
+                  </div>
+                )}
+                {tenant.portalToken && <PortalLink href={`/${locale}/portal/${tenant.portalToken}`} />}
+              </div>
+            )}
 
             {/* Poznámky */}
             {tenant.notes && (

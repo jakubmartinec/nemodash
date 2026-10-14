@@ -1,17 +1,20 @@
 "use client";
 
-import { useState } from "react";
-import { useTranslations } from "next-intl";
-import { Check, Save } from "lucide-react";
+import Link from "next/link";
+import { useLocale, useTranslations } from "next-intl";
+import { Check, ExternalLink, Save } from "lucide-react";
 import { useAIChatContext } from "@/components/ai-chat/AIChatProvider";
-import type { ChatMessage, InvoiceData, SettlementData } from "@/lib/ai-chat/types";
-import { formatCZK } from "@/lib/ai-chat/engine";
+import type { ChatMessage, InvoiceData } from "@/lib/ai-chat/types";
+import type { UtilitySettlement } from "@/lib/types";
+import { computeSettlement } from "@/lib/settlement";
+import { formatCZK, formatDate } from "@/lib/format";
+import { getTenantById } from "@/lib/mock-data";
 
 interface ActionProposalData {
   propertyId: string;
   propertyName: string;
   invoice: InvoiceData;
-  settlement: SettlementData;
+  settlements: UtilitySettlement[];
 }
 
 interface ActionProposalProps {
@@ -20,48 +23,44 @@ interface ActionProposalProps {
 
 export default function ActionProposal({ message }: ActionProposalProps) {
   const t = useTranslations("aiChat");
-  const { saved, saveAll } = useAIChatContext();
-  const [localSaved, setLocalSaved] = useState(false);
+  const locale = useLocale();
+  const { saved: isSaved, saveAll } = useAIChatContext();
   const data = message.data as unknown as ActionProposalData;
   if (!data) return null;
 
-  const { invoice, settlement, propertyName } = data;
-  const isSaved = saved || localSaved;
+  const { invoice, settlements, propertyName } = data;
+  const tenants = settlements.map((s) => ({ s, r: computeSettlement(s), tenant: getTenantById(s.tenantId) }));
 
   const actions = [
     {
       label: t("paymentEntry", { type: "vodné a stočné", amount: invoice.toPay }),
       sub: t("paymentEntrySub", { dueDate: invoice.dueDate }),
     },
-    {
-      label: t("receivableEntry", { name: settlement.tenantName, amount: formatCZK(Math.abs(settlement.difference)) }),
-      sub: t("receivableEntrySub", {
-        advances: formatCZK(settlement.totalAdvances),
-        actual: formatCZK(settlement.actualCost),
-      }),
-    },
+    ...tenants
+      .filter(({ r }) => r.outcome !== "even")
+      .map(({ s, r, tenant }) => ({
+        label: t(r.outcome === "underpaid" ? "receivableEntry" : "refundEntry", {
+          name: tenant?.name ?? "",
+          amount: formatCZK(Math.abs(r.balance), locale, true),
+        }),
+        sub: t("receivableEntrySub", {
+          advances: formatCZK(r.advancesPaid, locale),
+          actual: formatCZK(r.cost, locale, true),
+          dueDate: formatDate(s.dueDate, locale),
+        }),
+      })),
     {
       label: t("documentEntry", { number: invoice.invoiceNumber }),
       sub: t("documentEntrySub", { property: propertyName }),
     },
     {
-      label: t("reminderEntry"),
-      sub: t("reminderEntrySub", { invoiceDate: invoice.dueDate, tenantDate: "30.04.2026" }),
-    },
-    {
-      label: t("advanceChangeEntry", {
-        old: formatCZK(settlement.monthlyAdvance),
-        new: formatCZK(settlement.suggestedNewAdvance),
-      }),
-      sub: t("advanceChangeEntrySub", {
-        actual: formatCZK(Math.round(settlement.actualCost / settlement.months)),
-      }),
+      label: t("portalEntry"),
+      sub: t("portalEntrySub"),
     },
   ];
 
   function handleSave() {
-    setLocalSaved(true);
-    saveAll(propertyName);
+    saveAll();
   }
 
   return (
@@ -111,6 +110,22 @@ export default function ActionProposal({ message }: ActionProposalProps) {
                 <p className="text-xs text-green-700 font-medium">
                   {t("saved", { property: propertyName })}
                 </p>
+              </div>
+              {/* Odkazy na pohled nájemníka */}
+              <div className="mt-2 flex flex-wrap gap-2">
+                {tenants
+                  .filter(({ tenant }) => tenant?.portalToken)
+                  .map(({ tenant }) => (
+                    <Link
+                      key={tenant!.id}
+                      href={`/${locale}/portal/${tenant!.portalToken}`}
+                      target="_blank"
+                      className="inline-flex items-center gap-1 rounded-md border border-gray-200 px-2 py-1 text-xs text-gray-700 hover:bg-gray-50"
+                    >
+                      <ExternalLink className="w-3 h-3" />
+                      {t("openPortal", { name: tenant!.name })}
+                    </Link>
+                  ))}
               </div>
             </div>
           )}

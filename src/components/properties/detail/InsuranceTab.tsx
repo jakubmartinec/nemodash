@@ -2,12 +2,14 @@ import { useTranslations } from "next-intl";
 import { Shield } from "lucide-react";
 import { cn } from "@/lib/utils";
 import type { Insurance } from "@/lib/types";
+import { formatCZK, formatDate } from "@/lib/format";
+import { getToday } from "@/lib/constants";
 
 interface InsuranceTabProps {
   insurances: Insurance[];
 }
 
-const TODAY = new Date("2026-03-08");
+const TODAY = getToday();
 const WARNING_DAYS = 90;
 
 function getInsuranceStatus(endDate: string): "active" | "expiring_soon" | "expired" {
@@ -15,22 +17,6 @@ function getInsuranceStatus(endDate: string): "active" | "expiring_soon" | "expi
   if (end < TODAY) return "expired";
   const diff = Math.ceil((end.getTime() - TODAY.getTime()) / (1000 * 60 * 60 * 24));
   return diff <= WARNING_DAYS ? "expiring_soon" : "active";
-}
-
-function formatDate(dateStr: string) {
-  return new Intl.DateTimeFormat("cs-CZ", {
-    day: "numeric",
-    month: "short",
-    year: "numeric",
-  }).format(new Date(dateStr));
-}
-
-function formatCZK(amount: number) {
-  return new Intl.NumberFormat("cs-CZ", {
-    style: "currency",
-    currency: "CZK",
-    maximumFractionDigits: 0,
-  }).format(amount);
 }
 
 const STATUS_STYLES = {

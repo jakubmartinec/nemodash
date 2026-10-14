@@ -27,6 +27,7 @@ export interface Tenant {
   monthlyRent: number;
   deposit?: number;
   notes?: string;
+  portalToken?: string; // tajný odkaz do nájemnického portálu (do napojení Firebase Auth)
   advances?: {
     water?: number;        // měsíční záloha na vodu v Kč
     gas?: number;          // měsíční záloha na plyn v Kč
@@ -136,4 +137,39 @@ export interface PropertyDocument {
   size?: number; // bajty
   mimeType?: string;
   notes?: string;
+}
+
+// Pronajímatel — kontakt a platební údaje zobrazené nájemníkům
+export interface Landlord {
+  name: string;
+  email: string;
+  phone?: string;
+  bankAccount: string; // účet pro doplatky
+}
+
+export type UtilityKind = "water" | "gas" | "electricity";
+
+// Vyúčtování záloh na službu jednomu nájemníkovi.
+// Podíl na nákladech = totalCost × consumption / totalConsumption (podle podružného měřidla).
+export interface UtilitySettlement {
+  id: string;
+  propertyId: string;
+  tenantId: string;
+  utility: UtilityKind;
+  periodFrom: string;
+  periodTo: string;
+  months: number;
+  supplier: string;
+  invoiceNumber: string;
+  totalCost: number; // cena za celý dům dle faktury, vč. DPH
+  totalConsumption: number; // m³ za celý dům
+  meterStart: number; // stav podružného vodoměru nájemníka
+  meterEnd: number;
+  monthlyAdvance: number; // záloha placená nájemníkem
+  issuedDate: string;
+  dueDate: string; // splatnost doplatku / vrácení přeplatku
+  settledDate?: string; // vyrovnáno
+  variableSymbol: string;
+  newMonthlyAdvance?: number;
+  newAdvanceFrom?: string;
 }

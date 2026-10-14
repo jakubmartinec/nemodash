@@ -1,7 +1,8 @@
 // Mock data pro vývoj — bude nahrazeno Firebase Firestore
 // Dnešní datum: 2026-03-08
 
-import { Property, Tenant, Payment, Inspection, Insurance, Contract, PropertyDocument } from "./types";
+import { Property, Tenant, Payment, Inspection, Insurance, Contract, PropertyDocument, Landlord, UtilitySettlement } from "./types";
+import { getToday } from "./constants";
 
 // ─── NEMOVITOSTI ────────────────────────────────────────────────────────────
 
@@ -153,6 +154,7 @@ export const mockTenants: Tenant[] = [
     monthlyRent: 12500,
     deposit: 25000,
     notes: "Dlouhodobý nájemník, platí spolehlivě",
+    portalToken: "nb435-novotny-7f3k9q",
     advances: { water: 750, gas: 500, electricity: 600 },
   },
   {
@@ -167,6 +169,7 @@ export const mockTenants: Tenant[] = [
     monthlyRent: 10800,
     deposit: 21600,
     notes: "Druhá bytová jednotka",
+    portalToken: "nb435-horackova-2m8x4d",
     advances: { water: 750, gas: 500, electricity: 600 },
   },
   {
@@ -859,6 +862,81 @@ export const mockDocuments: PropertyDocument[] = [
   },
 ];
 
+// ─── PRONAJÍMATEL A VYÚČTOVÁNÍ ZÁLOH ─────────────────────────────────────────
+
+export const mockLandlord: Landlord = {
+  name: "Ing. Ladislav Martinec",
+  email: "pronajimatel@example.cz",
+  phone: "+420 777 000 111",
+  bankAccount: "123456789/0100",
+};
+
+// Vodné a stočné Nerudova 435 — faktura SčVK se dělí podle podružných vodoměrů
+export const mockSettlements: UtilitySettlement[] = [
+  {
+    id: "set-1",
+    propertyId: "prop-1",
+    tenantId: "tenant-1",
+    utility: "water",
+    periodFrom: "2025-02-19",
+    periodTo: "2026-02-12",
+    months: 12,
+    supplier: "Severočeské vodovody a kanalizace, a.s.",
+    invoiceNumber: "3612033777",
+    totalCost: 16275.12,
+    totalConsumption: 108,
+    meterStart: 412,
+    meterEnd: 476,
+    monthlyAdvance: 750,
+    issuedDate: "2026-03-06",
+    dueDate: "2026-04-06",
+    variableSymbol: "2026001",
+    newMonthlyAdvance: 850,
+    newAdvanceFrom: "2026-04-01",
+  },
+  {
+    id: "set-2",
+    propertyId: "prop-1",
+    tenantId: "tenant-2",
+    utility: "water",
+    periodFrom: "2025-02-19",
+    periodTo: "2026-02-12",
+    months: 12,
+    supplier: "Severočeské vodovody a kanalizace, a.s.",
+    invoiceNumber: "3612033777",
+    totalCost: 16275.12,
+    totalConsumption: 108,
+    meterStart: 188,
+    meterEnd: 232,
+    monthlyAdvance: 750,
+    issuedDate: "2026-03-06",
+    dueDate: "2026-04-06",
+    variableSymbol: "2026002",
+    newMonthlyAdvance: 600,
+    newAdvanceFrom: "2026-04-01",
+  },
+  {
+    id: "set-3",
+    propertyId: "prop-1",
+    tenantId: "tenant-1",
+    utility: "water",
+    periodFrom: "2024-02-19",
+    periodTo: "2025-02-18",
+    months: 12,
+    supplier: "Severočeské vodovody a kanalizace, a.s.",
+    invoiceNumber: "3612029514",
+    totalCost: 14980,
+    totalConsumption: 104,
+    meterStart: 350,
+    meterEnd: 412,
+    monthlyAdvance: 650,
+    issuedDate: "2025-03-05",
+    dueDate: "2025-04-05",
+    settledDate: "2025-04-02",
+    variableSymbol: "2025001",
+  },
+];
+
 // ─── HELPER FUNKCE ───────────────────────────────────────────────────────────
 
 export function getPropertyById(id: string): Property | undefined {
@@ -889,6 +967,29 @@ export function getTenantById(id: string): Tenant | undefined {
   return mockTenants.find((t) => t.id === id);
 }
 
+export function getTenantByPortalToken(token: string): Tenant | undefined {
+  return mockTenants.find((t) => t.portalToken === token);
+}
+
+export function getPaymentsByTenant(tenantId: string): Payment[] {
+  return mockPayments
+    .filter((p) => p.tenantId === tenantId)
+    .sort((a, b) => b.dueDate.localeCompare(a.dueDate));
+}
+
+// Vyúčtování nejnovější první
+export function getSettlementsByTenant(tenantId: string): UtilitySettlement[] {
+  return mockSettlements
+    .filter((s) => s.tenantId === tenantId)
+    .sort((a, b) => b.periodTo.localeCompare(a.periodTo));
+}
+
+export function getSettlementsByProperty(propertyId: string): UtilitySettlement[] {
+  return mockSettlements
+    .filter((s) => s.propertyId === propertyId)
+    .sort((a, b) => b.periodTo.localeCompare(a.periodTo));
+}
+
 export function getDocumentsByProperty(propertyId: string): PropertyDocument[] {
   return mockDocuments
     .filter((d) => d.propertyId === propertyId)
@@ -912,7 +1013,7 @@ export interface UpcomingEvent {
 }
 
 export function getUpcomingEvents(withinDays = 90): UpcomingEvent[] {
-  const now = new Date();
+  const now = getToday();
   const threshold = new Date(now.getTime() + withinDays * 24 * 60 * 60 * 1000);
   const events: UpcomingEvent[] = [];
 
@@ -980,7 +1081,7 @@ export function getDashboardStats() {
   const expiringSoonInspections = mockInspections.filter((i) => i.status === "expiring_soon");
   const activeContracts = mockContracts.filter((c) => {
     if (!c.endDate) return true;
-    return new Date(c.endDate) >= new Date();
+    return new Date(c.endDate) >= getToday();
   });
 
   return {

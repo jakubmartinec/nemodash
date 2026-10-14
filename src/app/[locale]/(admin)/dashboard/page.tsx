@@ -22,16 +22,8 @@ import {
   getPaymentsByProperty,
   getInspectionsByProperty,
 } from "@/lib/mock-data";
-import { CONTRACT_EXPIRING_THRESHOLD_DAYS } from "@/lib/constants";
-
-// Formátovač CZK pro subtext
-function formatCZK(amount: number): string {
-  return new Intl.NumberFormat("cs-CZ", {
-    style: "currency",
-    currency: "CZK",
-    maximumFractionDigits: 0,
-  }).format(amount);
-}
+import { CONTRACT_EXPIRING_THRESHOLD_DAYS, getToday } from "@/lib/constants";
+import { formatCZK } from "@/lib/format";
 
 export default async function DashboardPage({
   params,
@@ -55,7 +47,7 @@ export default async function DashboardPage({
   );
 
   // ── StatCard 4: končící smlouvy do 90 dní ───────────────────────────────
-  const now = new Date("2026-03-08");
+  const now = getToday();
   const threshold90 = new Date(
     now.getTime() + CONTRACT_EXPIRING_THRESHOLD_DAYS * 24 * 60 * 60 * 1000
   );

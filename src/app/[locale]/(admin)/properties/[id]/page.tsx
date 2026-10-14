@@ -9,6 +9,7 @@ import {
   getInsurancesByProperty,
   getContractsByProperty,
   getDocumentsByProperty,
+  getSettlementsByProperty,
 } from "@/lib/mock-data";
 import PropertyDetail from "@/components/properties/PropertyDetail";
 
@@ -29,6 +30,7 @@ export default async function PropertyDetailPage({
   const insurances = getInsurancesByProperty(id);
   const contracts = getContractsByProperty(id);
   const documents = getDocumentsByProperty(id);
+  const settlements = getSettlementsByProperty(id);
 
   return (
     <Suspense fallback={<div className="p-8 text-muted-foreground text-sm">{tCommon("loading")}</div>}>
@@ -41,6 +43,7 @@ export default async function PropertyDetailPage({
         insurances={insurances}
         contracts={contracts}
         documents={documents}
+        settlements={settlements}
       />
     </Suspense>
   );

@@ -5,6 +5,7 @@ import { useTranslations } from "next-intl";
 import { ChevronsUpDown, ChevronUp, ChevronDown } from "lucide-react";
 import { cn } from "@/lib/utils";
 import type { Inspection, Property, InspectionType } from "@/lib/types";
+import { formatDate } from "@/lib/format";
 
 interface InspectionsClientProps {
   inspections: Inspection[];
@@ -37,15 +38,6 @@ const INSPECTION_TYPES: InspectionType[] = [
   "chimney", "gas_boiler", "electrical", "fire_alarm",
   "fire_extinguisher", "elevator", "other",
 ];
-const STATUSES: StatusFilter[] = ["", "valid", "expiring_soon", "expired"];
-
-function formatDate(dateStr: string) {
-  return new Intl.DateTimeFormat("cs-CZ", {
-    day: "numeric",
-    month: "short",
-    year: "numeric",
-  }).format(new Date(dateStr));
-}
 
 export default function InspectionsClient({ inspections, properties }: InspectionsClientProps) {
   const t = useTranslations("inspections");

@@ -2,6 +2,18 @@
 
 // Typy jsou importovány dle potřeby z ./types
 
+// Referenční „dnešek“ mock dat — všechny stavy se počítají vůči němu.
+// Po napojení na databázi stačí vrátit new Date().
+export const REFERENCE_DATE = "2026-03-08";
+
+export function getToday(): Date {
+  return new Date(REFERENCE_DATE);
+}
+
+export function daysUntil(dateStr: string): number {
+  return Math.ceil((new Date(dateStr).getTime() - getToday().getTime()) / (1000 * 60 * 60 * 24));
+}
+
 // Počet dní pro stavové indikátory
 export const INSPECTION_EXPIRING_THRESHOLD_DAYS = 60;
 export const CONTRACT_EXPIRING_THRESHOLD_DAYS = 90;
@@ -18,9 +30,7 @@ export const STATUS_COLORS = {
 
 // Výpočet stavu revize podle data
 export function getInspectionStatus(nextDueDate: string): "valid" | "expiring_soon" | "expired" {
-  const now = new Date();
-  const due = new Date(nextDueDate);
-  const diffDays = Math.ceil((due.getTime() - now.getTime()) / (1000 * 60 * 60 * 24));
+  const diffDays = daysUntil(nextDueDate);
 
   if (diffDays < 0) return "expired";
   if (diffDays <= INSPECTION_EXPIRING_THRESHOLD_DAYS) return "expiring_soon";
@@ -31,9 +41,7 @@ export function getInspectionStatus(nextDueDate: string): "valid" | "expiring_so
 export function getContractStatus(endDate?: string): "active" | "expiring_soon" | "expired" {
   if (!endDate) return "active";
 
-  const now = new Date();
-  const end = new Date(endDate);
-  const diffDays = Math.ceil((end.getTime() - now.getTime()) / (1000 * 60 * 60 * 24));
+  const diffDays = daysUntil(endDate);
 
   if (diffDays < 0) return "expired";
   if (diffDays <= CONTRACT_EXPIRING_THRESHOLD_DAYS) return "expiring_soon";

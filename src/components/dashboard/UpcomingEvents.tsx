@@ -1,6 +1,8 @@
 import { useTranslations } from "next-intl";
 import { cn } from "@/lib/utils";
 import type { UpcomingEvent } from "@/lib/mock-data";
+import { formatDate } from "@/lib/format";
+import { getToday } from "@/lib/constants";
 
 interface UpcomingEventsProps {
   events: UpcomingEvent[];
@@ -36,16 +38,8 @@ const INSURANCE_TYPE_KEYS: Record<string, string> = {
   other: "insurance.type.other",
 };
 
-function formatDate(dateStr: string, locale: string): string {
-  return new Intl.DateTimeFormat(locale === "cs" ? "cs-CZ" : "en-GB", {
-    day: "numeric",
-    month: "short",
-    year: "numeric",
-  }).format(new Date(dateStr));
-}
-
 function daysDiff(dateStr: string): number {
-  const now = new Date("2026-03-08"); // mock dnešní datum
+  const now = getToday();
   const due = new Date(dateStr);
   return Math.ceil((due.getTime() - now.getTime()) / (1000 * 60 * 60 * 24));
 }
@@ -79,7 +73,7 @@ export default function UpcomingEvents({ events }: UpcomingEventsProps) {
           const isExpired = event.status === "expired";
 
           // Popísek detail události
-          let detailKey = EVENT_TYPE_LABELS[event.type];
+          const detailKey = EVENT_TYPE_LABELS[event.type];
           let detail = t(`dashboard.${detailKey}` as Parameters<typeof t>[0]);
           if (event.type === "inspection" && INSPECTION_TYPE_KEYS[event.label]) {
             detail = t(INSPECTION_TYPE_KEYS[event.label] as Parameters<typeof t>[0]);

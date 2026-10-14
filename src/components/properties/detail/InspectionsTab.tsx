@@ -1,17 +1,10 @@
 import { useTranslations } from "next-intl";
 import { cn } from "@/lib/utils";
 import type { Inspection } from "@/lib/types";
+import { formatDate } from "@/lib/format";
 
 interface InspectionsTabProps {
   inspections: Inspection[];
-}
-
-function formatDate(dateStr: string) {
-  return new Intl.DateTimeFormat("cs-CZ", {
-    day: "numeric",
-    month: "short",
-    year: "numeric",
-  }).format(new Date(dateStr));
 }
 
 const STATUS_STYLES = {
