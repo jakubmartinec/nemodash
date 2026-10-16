@@ -31,7 +31,7 @@ function FilterButton({
       className={cn(
         "flex items-center gap-1.5 px-3 py-1.5 rounded-md text-sm font-medium transition-colors",
         active
-          ? "bg-primary text-primary-foreground"
+          ? "bg-brand-soft text-brand-text"
           : "bg-muted text-muted-foreground hover:bg-muted/80 hover:text-foreground"
       )}
     >

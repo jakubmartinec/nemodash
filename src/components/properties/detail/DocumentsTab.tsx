@@ -20,14 +20,6 @@ interface DocumentsTabProps {
   documents: PropertyDocument[];
 }
 
-const CATEGORY_STYLES: Record<DocumentCategory, string> = {
-  contract: "bg-blue-50 text-blue-700 border-blue-200",
-  inspection: "bg-yellow-50 text-yellow-700 border-yellow-200",
-  insurance: "bg-purple-50 text-purple-700 border-purple-200",
-  invoice: "bg-orange-50 text-orange-700 border-orange-200",
-  photo: "bg-green-50 text-green-700 border-green-200",
-  other: "bg-muted text-muted-foreground border-border",
-};
 
 function CategoryIcon({ category, className }: { category: DocumentCategory; className?: string }) {
   const cls = cn("h-4 w-4 shrink-0", className);
@@ -128,7 +120,7 @@ export default function DocumentsTab({ documents }: DocumentsTabProps) {
               </div>
 
               <div className="mt-1.5 flex flex-wrap items-center gap-2">
-                <span className={cn("text-xs font-medium px-1.5 py-0.5 rounded border", CATEGORY_STYLES[doc.category])}>
+                <span className={"text-xs font-medium px-1.5 py-0.5 rounded border border-border bg-muted text-muted-foreground"}>
                   {t(`documentCategory.${doc.category}` as Parameters<typeof t>[0])}
                 </span>
                 <span className="text-xs text-muted-foreground">{formatDate(doc.uploadedAt)}</span>

@@ -9,16 +9,16 @@ interface InspectionsTabProps {
 
 const STATUS_STYLES = {
   valid: {
-    dot: "bg-green-500",
-    badge: "bg-green-50 text-green-700 border-green-200",
+    dot: "bg-success-fill",
+    badge: "bg-success-soft text-success border-success/30",
   },
   expiring_soon: {
-    dot: "bg-yellow-400",
-    badge: "bg-yellow-50 text-yellow-700 border-yellow-200",
+    dot: "bg-warning-fill",
+    badge: "bg-warning-soft text-warning border-warning/30",
   },
   expired: {
-    dot: "bg-red-500",
-    badge: "bg-red-50 text-red-700 border-red-200",
+    dot: "bg-danger-fill",
+    badge: "bg-danger-soft text-danger border-danger/30",
   },
 } as const;
 
@@ -65,7 +65,7 @@ export default function InspectionsTab({ inspections }: InspectionsTabProps) {
               </div>
               <div>
                 <p className="text-xs text-muted-foreground">{tInsp("fields.nextDueDate")}</p>
-                <p className={insp.status === "expired" ? "text-red-600 font-medium" : ""}>
+                <p className={insp.status === "expired" ? "text-danger font-medium" : ""}>
                   {formatDate(insp.nextDueDate)}
                 </p>
               </div>

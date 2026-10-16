@@ -16,9 +16,9 @@ type SortField = "property" | "type" | "amount" | "dueDate" | "paidDate" | "stat
 type SortDir = "asc" | "desc";
 
 const STATUS_PILL = {
-  paid: "bg-green-50 text-green-700 border-green-200",
-  pending: "bg-yellow-50 text-yellow-700 border-yellow-200",
-  overdue: "bg-red-50 text-red-700 border-red-200",
+  paid: "bg-success-soft text-success border-success/30",
+  pending: "bg-warning-soft text-warning border-warning/30",
+  overdue: "bg-danger-soft text-danger border-danger/30",
 } as const;
 
 function formatPeriodLabel(ym: string): string {
@@ -122,7 +122,7 @@ export default function PaymentsClient({ payments, properties }: PaymentsClientP
       <div className="grid grid-cols-3 gap-3">
         <div className="rounded-lg border border-border bg-card p-4 text-center">
           <p className="text-xs text-muted-foreground mb-1">{t("summaryIncome")}</p>
-          <p className="text-lg font-bold text-green-700">{formatCZK(summary.income)}</p>
+          <p className="text-lg font-bold text-success">{formatCZK(summary.income)}</p>
         </div>
         <div className="rounded-lg border border-border bg-card p-4 text-center">
           <p className="text-xs text-muted-foreground mb-1">{t("summaryExpenses")}</p>
@@ -133,7 +133,7 @@ export default function PaymentsClient({ payments, properties }: PaymentsClientP
           <p
             className={cn(
               "text-lg font-bold",
-              summary.unpaid > 0 ? "text-red-600" : "text-green-700"
+              summary.unpaid > 0 ? "text-danger" : "text-success"
             )}
           >
             {t("unpaidCount", { count: summary.unpaid })}
@@ -256,13 +256,13 @@ export default function PaymentsClient({ payments, properties }: PaymentsClientP
                     <td className="px-4 py-3 text-right font-semibold tabular-nums whitespace-nowrap">
                       <span className="inline-flex items-center gap-1 justify-end">
                         {payment.direction === "incoming" ? (
-                          <ArrowDownLeft className="h-3.5 w-3.5 text-green-600" />
+                          <ArrowDownLeft className="h-3.5 w-3.5 text-success" />
                         ) : (
                           <ArrowUpRight className="h-3.5 w-3.5 text-muted-foreground" />
                         )}
                         <span
                           className={
-                            payment.direction === "incoming" ? "text-green-700" : ""
+                            payment.direction === "incoming" ? "text-success" : ""
                           }
                         >
                           {formatCZK(payment.amount)}
@@ -310,7 +310,7 @@ export default function PaymentsClient({ payments, properties }: PaymentsClientP
                   <p
                     className={cn(
                       "font-bold text-sm tabular-nums",
-                      payment.direction === "incoming" ? "text-green-700" : ""
+                      payment.direction === "incoming" ? "text-success" : ""
                     )}
                   >
                     {payment.direction === "incoming" ? (

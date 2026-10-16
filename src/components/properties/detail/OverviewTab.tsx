@@ -26,22 +26,15 @@ function OverviewCard({
   variant: CardVariant;
   lines: string[];
 }) {
-  const border = {
-    ok: "border-l-green-500",
-    warning: "border-l-yellow-400",
-    danger: "border-l-red-500",
-    neutral: "border-l-muted-foreground/30",
-  }[variant];
-
   const iconBg = {
-    ok: "bg-green-100 text-green-700",
-    warning: "bg-yellow-100 text-yellow-700",
-    danger: "bg-red-100 text-red-700",
+    ok: "bg-success-soft text-success",
+    warning: "bg-warning-soft text-warning",
+    danger: "bg-danger-soft text-danger",
     neutral: "bg-muted text-muted-foreground",
   }[variant];
 
   return (
-    <div className={cn("rounded-lg border border-border border-l-4 bg-card p-4", border)}>
+    <div className="rounded-lg border border-border bg-card p-4">
       <div className="flex items-center gap-2 mb-3">
         <div className={cn("rounded-md p-1.5", iconBg)}>
           <Icon className="h-4 w-4" />

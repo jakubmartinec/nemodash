@@ -3,80 +3,116 @@
 
 @custom-variant dark (&:is(.dark *));
 
+/*
+ * Design systém Yard25 Grafit (https://claude.ai/artifact/6hUcTb3z3puwywdqN2Zm6g)
+ * Šedá je scéna, modrá je metrika: stránka na šedém bg, obsah na bílých panelech,
+ * grafitový text a tlačítka, modrá jen pro data, odkazy, aktivní stav a focus.
+ */
 :root {
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.145 0 0);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.145 0 0);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.145 0 0);
-  --primary: oklch(0.205 0 0);
-  --primary-foreground: oklch(0.985 0 0);
-  --secondary: oklch(0.97 0 0);
-  --secondary-foreground: oklch(0.205 0 0);
-  --muted: oklch(0.97 0 0);
-  --muted-foreground: oklch(0.556 0 0);
-  --accent: oklch(0.97 0 0);
-  --accent-foreground: oklch(0.205 0 0);
-  --destructive: oklch(0.577 0.245 27.325);
-  --border: oklch(0.922 0 0);
-  --input: oklch(0.922 0 0);
-  --ring: oklch(0.708 0 0);
-  --chart-1: oklch(0.646 0.222 41.116);
-  --chart-2: oklch(0.6 0.118 184.704);
-  --chart-3: oklch(0.398 0.07 227.392);
-  --chart-4: oklch(0.828 0.189 84.429);
-  --chart-5: oklch(0.769 0.188 70.08);
-  --radius: 0.625rem;
-  --sidebar: oklch(0.985 0 0);
-  --sidebar-foreground: oklch(0.145 0 0);
-  --sidebar-primary: oklch(0.205 0 0);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.97 0 0);
-  --sidebar-accent-foreground: oklch(0.205 0 0);
-  --sidebar-border: oklch(0.922 0 0);
-  --sidebar-ring: oklch(0.708 0 0);
-  /* Stavové barvy — sem se napojí design systém (Yard25 Grafit) */
-  --success: oklch(0.52 0.13 150);
-  --success-soft: oklch(0.96 0.03 150);
-  --warning: oklch(0.55 0.12 70);
-  --warning-soft: oklch(0.97 0.04 85);
-  --danger: oklch(0.55 0.2 27);
-  --danger-soft: oklch(0.97 0.02 25);
+  /* Primitiva Grafitu */
+  --y25-blue: #0284c7;
+  --y25-blue-text: #0369a1;
+  --y25-graphite: #2c2c2e;
+
+  /* Sémantické tokeny Grafitu */
+  --bg: #f4f4f4;
+  --panel: #ffffff;
+  --surface: #ebebeb;
+  --ink: #262626;
+  --ink-2: #525252;
+  --muted-ink: #636363;
+  --line: #e0e0e0;
+  --control-line: #8a8a8a;
+  --band: #2c2c2e;
+  --on-band: #ffffff;
+  --brand: #0284c7; /* Grafit „accent“: metrika, aktivní stav, průběh */
+  --brand-text: #0369a1; /* Grafit „accent-text“: odkazy, aktivní navigace */
+  --brand-soft: #e0f2fe; /* Grafit „accent-soft“: vybraný řádek, aktivní filtr */
+  --focus: #0284c7;
+  --good: #0ca30c;
+  --warning-fill: #fab219;
+  --serious: #ec835a;
+  --critical: #d03b3b;
+  --good-text: #006300;
+  --warning-text: #8a5a00;
+  --critical-text: #b42828;
+  --chart-context: #a3a3a3;
+  --shadow-pop: 0 4px 16px rgba(0, 0, 0, 0.1);
+
+  /* shadcn/ui proměnné namapované na Grafit */
+  --background: var(--bg);
+  --foreground: var(--ink);
+  --card: var(--panel);
+  --card-foreground: var(--ink);
+  --popover: var(--panel);
+  --popover-foreground: var(--ink);
+  --primary: var(--ink); /* tlačítka jsou grafitová, ne modrá */
+  --primary-foreground: var(--panel);
+  --secondary: var(--surface);
+  --secondary-foreground: var(--ink);
+  --muted: var(--surface);
+  --muted-foreground: var(--muted-ink);
+  --accent: var(--surface); /* shadcn hover plocha */
+  --accent-foreground: var(--ink);
+  --destructive: var(--critical-text);
+  --border: var(--line);
+  --input: var(--control-line);
+  --ring: var(--focus);
+  --chart-1: #0284c7;
+  --chart-2: #eb6834;
+  --chart-3: #1baf7a;
+  --chart-4: #eda100;
+  --chart-5: #e87ba4;
+  --radius: 8px; /* radius-md: panely; radius-sm = 4px tlačítka a inputy */
+  --sidebar: var(--panel);
+  --sidebar-foreground: var(--ink);
+  --sidebar-primary: var(--brand-text);
+  --sidebar-primary-foreground: var(--panel);
+  --sidebar-accent: var(--brand-soft);
+  --sidebar-accent-foreground: var(--brand-text);
+  --sidebar-border: var(--line);
+  --sidebar-ring: var(--focus);
+
+  /* Stav: text ve stavové barvě Grafitu, podbarvení z jeho výplní */
+  --success: var(--good-text);
+  --success-soft: #0ca30c1a;
+  --warning: var(--warning-text);
+  --warning-soft: #fab21933;
+  --danger: var(--critical-text);
+  --danger-soft: #d03b3b1a;
 }
 
-.dark {
-  --background: oklch(0.145 0 0);
-  --foreground: oklch(0.985 0 0);
-  --card: oklch(0.205 0 0);
-  --card-foreground: oklch(0.985 0 0);
-  --popover: oklch(0.205 0 0);
-  --popover-foreground: oklch(0.985 0 0);
-  --primary: oklch(0.985 0 0);
-  --primary-foreground: oklch(0.205 0 0);
-  --secondary: oklch(0.269 0 0);
-  --secondary-foreground: oklch(0.985 0 0);
-  --muted: oklch(0.269 0 0);
-  --muted-foreground: oklch(0.708 0 0);
-  --accent: oklch(0.269 0 0);
-  --accent-foreground: oklch(0.985 0 0);
-  --destructive: oklch(0.704 0.191 22.216);
-  --border: oklch(1 0 0 / 10%);
-  --input: oklch(1 0 0 / 15%);
-  --ring: oklch(0.556 0 0);
-  --chart-1: oklch(0.488 0.243 264.376);
-  --chart-2: oklch(0.696 0.17 162.48);
-  --chart-3: oklch(0.769 0.188 70.08);
-  --chart-4: oklch(0.627 0.265 303.9);
-  --chart-5: oklch(0.645 0.246 16.439);
-  --sidebar: oklch(0.205 0 0);
-  --sidebar-foreground: oklch(0.985 0 0);
-  --sidebar-primary: oklch(0.488 0.243 264.376);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.269 0 0);
-  --sidebar-accent-foreground: oklch(0.985 0 0);
-  --sidebar-border: oklch(1 0 0 / 10%);
-  --sidebar-ring: oklch(0.556 0 0);
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #121212;
+    --panel: #1e1e1e;
+    --surface: #2a2a2a;
+    --ink: #f4f4f4;
+    --ink-2: #c4c4c4;
+    --muted-ink: #9a9a9a;
+    --line: #333333;
+    --control-line: #7a7a7a;
+    --band: #262628;
+    --on-band: #f4f4f4;
+    --brand: #1d9ad9;
+    --brand-text: #38bdf8;
+    --brand-soft: #0c3a52;
+    --focus: #38bdf8;
+    --good-text: #0ca30c;
+    --warning-text: #fab219;
+    --critical-text: #ef7a7a;
+    --chart-context: #6b6b6b;
+    --chart-1: #1d9ad9;
+    --chart-2: #d95926;
+    --chart-3: #199e70;
+    --chart-4: #c98500;
+    --chart-5: #d55181;
+    --shadow-pop: 0 4px 16px rgba(0, 0, 0, 0.5);
+    --success-soft: #0ca30c26;
+    --warning-soft: #fab21926;
+    --danger-soft: #d03b3b33;
+    color-scheme: dark;
+  }
 }
 
 @theme inline {
@@ -104,9 +140,10 @@
   --color-chart-4: var(--chart-4);
   --color-chart-5: var(--chart-5);
   --radius-sm: calc(var(--radius) - 4px);
-  --radius-md: calc(var(--radius) - 2px);
-  --radius-lg: var(--radius);
-  --radius-xl: calc(var(--radius) + 4px);
+  --radius-md: var(--radius);
+  --radius-lg: calc(var(--radius) + 2px);
+  --radius-xl: calc(var(--radius) + 2px);
+  --radius-2xl: calc(var(--radius) + 2px);
   --color-sidebar: var(--sidebar);
   --color-sidebar-foreground: var(--sidebar-foreground);
   --color-sidebar-primary: var(--sidebar-primary);
@@ -115,21 +152,45 @@
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-ring: var(--sidebar-ring);
+  --color-panel: var(--panel);
+  --color-surface: var(--surface);
+  --color-ink-2: var(--ink-2);
+  --color-band: var(--band);
+  --color-on-band: var(--on-band);
+  --color-brand: var(--brand);
+  --color-brand-text: var(--brand-text);
+  --color-brand-soft: var(--brand-soft);
+  --color-chart-context: var(--chart-context);
   --color-success: var(--success);
   --color-success-soft: var(--success-soft);
+  --color-success-fill: var(--good);
   --color-warning: var(--warning);
   --color-warning-soft: var(--warning-soft);
+  --color-warning-fill: var(--warning-fill);
   --color-danger: var(--danger);
   --color-danger-soft: var(--danger-soft);
-  --font-sans: ui-sans-serif, system-ui, sans-serif;
-  --font-mono: ui-monospace, monospace;
+  --color-danger-fill: var(--critical);
+  --shadow-pop: var(--shadow-pop);
+  --font-sans: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, monospace;
 }
 
 @layer base {
   * {
-    @apply border-border outline-ring/50;
+    @apply border-border outline-ring;
   }
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground font-sans;
+    -webkit-font-smoothing: antialiased;
+  }
+  h1, h2, h3 {
+    text-wrap: balance;
+  }
+  :focus-visible {
+    outline: 2px solid var(--focus);
+    outline-offset: 2px;
+  }
+  a {
+    text-underline-offset: 2px;
   }
 }

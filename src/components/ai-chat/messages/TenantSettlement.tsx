@@ -20,22 +20,22 @@ export default function TenantSettlement({ message }: TenantSettlementProps) {
   return (
     <div className="flex items-start gap-2">
       {/* AI avatar */}
-      <div className="w-8 h-8 rounded-full bg-gradient-to-br from-indigo-500 to-purple-500 flex items-center justify-center shrink-0 mt-0.5">
-        <svg className="w-4 h-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+      <div className="w-8 h-8 rounded-full bg-primary flex items-center justify-center shrink-0 mt-0.5">
+        <svg className="w-4 h-4 text-primary-foreground" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
           <path strokeLinecap="round" strokeLinejoin="round" d="M9.813 15.904 9 18.75l-.813-2.846a4.5 4.5 0 0 0-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 0 0 3.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 0 0 3.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 0 0-3.09 3.09Z" />
         </svg>
       </div>
       <div className="flex-1 min-w-0">
-        <p className="text-sm text-gray-600 mb-2">
+        <p className="text-sm text-muted-foreground mb-2">
           {t("settlementDescription", { count: settlements.length })}
         </p>
-        <div className="rounded-xl border border-gray-200 bg-white divide-y divide-gray-100">
+        <div className="rounded-xl border border-border bg-card divide-y divide-border">
           {settlements.map((s) => {
             const r = computeSettlement(s);
             return (
               <div key={s.id} className="px-4 py-3 space-y-1">
                 <div className="flex items-baseline justify-between gap-2">
-                  <p className="text-sm font-semibold text-gray-900">{getTenantById(s.tenantId)?.name}</p>
+                  <p className="text-sm font-semibold text-foreground">{getTenantById(s.tenantId)?.name}</p>
                   <p
                     className={cn(
                       "text-sm font-bold tabular-nums",
@@ -46,14 +46,14 @@ export default function TenantSettlement({ message }: TenantSettlementProps) {
                     {formatCZK(Math.abs(r.balance), locale, true)}
                   </p>
                 </div>
-                <p className="text-xs text-gray-500">
+                <p className="text-xs text-muted-foreground">
                   {t("settlementRow", {
                     consumption: formatNumber(r.consumption, locale),
                     cost: formatCZK(r.cost, locale, true),
                     advances: formatCZK(r.advancesPaid, locale),
                   })}
                 </p>
-                <p className="text-xs text-gray-500">{tSet(r.outcome)}</p>
+                <p className="text-xs text-muted-foreground">{tSet(r.outcome)}</p>
               </div>
             );
           })}

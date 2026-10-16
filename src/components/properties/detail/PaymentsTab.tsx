@@ -12,9 +12,9 @@ interface PaymentsTabProps {
 }
 
 const STATUS_PILL = {
-  paid: "bg-green-50 text-green-700 border-green-200",
-  pending: "bg-yellow-50 text-yellow-700 border-yellow-200",
-  overdue: "bg-red-50 text-red-700 border-red-200",
+  paid: "bg-success-soft text-success border-success/30",
+  pending: "bg-warning-soft text-warning border-warning/30",
+  overdue: "bg-danger-soft text-danger border-danger/30",
 } as const;
 
 type Filter = "all" | PaymentStatus;
@@ -67,7 +67,7 @@ export default function PaymentsTab({ payments }: PaymentsTabProps) {
             className={cn(
               "px-3 py-1 rounded-md text-xs font-medium border transition-colors",
               filter === key
-                ? "bg-primary text-primary-foreground border-primary"
+                ? "bg-brand-soft text-brand-text border-brand/40"
                 : "bg-background text-muted-foreground border-border hover:border-foreground/30"
             )}
           >
@@ -109,9 +109,9 @@ export default function PaymentsTab({ payments }: PaymentsTabProps) {
                 <td className="px-4 py-3">
                   <div className="flex items-center gap-2">
                     {payment.direction === "incoming" ? (
-                      <ArrowDownLeft className="h-3.5 w-3.5 text-green-600 shrink-0" />
+                      <ArrowDownLeft className="h-3.5 w-3.5 text-success shrink-0" />
                     ) : (
-                      <ArrowUpRight className="h-3.5 w-3.5 text-red-500 shrink-0" />
+                      <ArrowUpRight className="h-3.5 w-3.5 text-danger shrink-0" />
                     )}
                     <span className="truncate max-w-[130px]">
                       {tPay(`type.${payment.type}` as Parameters<typeof tPay>[0])}
@@ -121,7 +121,7 @@ export default function PaymentsTab({ payments }: PaymentsTabProps) {
                 <td className="px-4 py-3 text-right font-semibold tabular-nums whitespace-nowrap">
                   <span
                     className={
-                      payment.direction === "incoming" ? "text-green-700" : "text-foreground"
+                      payment.direction === "incoming" ? "text-success" : "text-foreground"
                     }
                   >
                     {payment.direction === "incoming" ? "+" : "−"}
@@ -156,7 +156,7 @@ export default function PaymentsTab({ payments }: PaymentsTabProps) {
         <span
           className={cn(
             "font-bold tabular-nums",
-            totalAmount >= 0 ? "text-green-700" : "text-red-600"
+            totalAmount >= 0 ? "text-success" : "text-danger"
           )}
         >
           {totalAmount >= 0 ? "+" : ""}

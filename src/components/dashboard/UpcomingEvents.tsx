@@ -99,7 +99,7 @@ export default function UpcomingEvents({ events }: UpcomingEventsProps) {
               <span
                 className={cn(
                   "h-2 w-2 rounded-full shrink-0 mt-0.5",
-                  isExpired ? "bg-red-500" : "bg-yellow-400"
+                  isExpired ? "bg-danger-fill" : "bg-warning-fill"
                 )}
               />
 
@@ -114,7 +114,7 @@ export default function UpcomingEvents({ events }: UpcomingEventsProps) {
                 <p
                   className={cn(
                     "text-xs font-medium",
-                    isExpired ? "text-red-600" : "text-yellow-600"
+                    isExpired ? "text-danger" : "text-warning"
                   )}
                 >
                   {relativeLabel}

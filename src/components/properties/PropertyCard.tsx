@@ -35,20 +35,20 @@ function StatusPip({
 }) {
   const dotClass =
     level === "ok"
-      ? "bg-green-500"
+      ? "bg-success-fill"
       : level === "warning"
-      ? "bg-yellow-400"
+      ? "bg-warning-fill"
       : level === "danger"
-      ? "bg-red-500"
+      ? "bg-danger-fill"
       : "bg-muted-foreground/30";
 
   const textClass =
     level === "ok"
-      ? "text-green-700"
+      ? "text-success"
       : level === "warning"
-      ? "text-yellow-700"
+      ? "text-warning"
       : level === "danger"
-      ? "text-red-600"
+      ? "text-danger"
       : "text-muted-foreground/60";
 
   const sublabel =
@@ -83,7 +83,7 @@ export default function PropertyCard({ data, locale }: PropertyCardProps) {
   return (
     <Link
       href={`/${locale}/properties/${property.id}`}
-      className="group flex flex-col rounded-lg border border-border bg-card hover:border-foreground/20 hover:shadow-sm transition-all"
+      className="group flex flex-col rounded-lg border border-border bg-card hover:border-foreground/20 transition-all"
     >
       {/* Záhlaví karty */}
       <div className="flex items-start gap-3 p-4 pb-3">
@@ -99,8 +99,8 @@ export default function PropertyCard({ data, locale }: PropertyCardProps) {
               className={cn(
                 "text-xs font-medium px-1.5 py-0.5 rounded",
                 property.ownership === "owned"
-                  ? "bg-blue-50 text-blue-700"
-                  : "bg-orange-50 text-orange-700"
+                  ? "bg-muted text-muted-foreground"
+                  : "bg-brand-soft text-brand-text"
               )}
             >
               {ownershipLabel}

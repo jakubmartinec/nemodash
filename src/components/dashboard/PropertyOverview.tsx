@@ -36,7 +36,7 @@ function StatusDot({
   }
   if (status === "ok") {
     return (
-      <span className="flex items-center gap-1 text-xs text-green-600">
+      <span className="flex items-center gap-1 text-xs text-success">
         <CheckCircle2 className="h-3 w-3" />
         {okLabel}
       </span>
@@ -46,7 +46,7 @@ function StatusDot({
     <span
       className={cn(
         "flex items-center gap-1 text-xs font-medium",
-        status === "danger" ? "text-red-600" : "text-yellow-600"
+        status === "danger" ? "text-danger" : "text-warning"
       )}
     >
       <AlertTriangle className="h-3 w-3" />

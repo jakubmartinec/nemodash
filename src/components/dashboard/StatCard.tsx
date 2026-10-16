@@ -15,16 +15,16 @@ const variantStyles = {
     value: "text-foreground",
   },
   success: {
-    icon: "bg-green-100 text-green-700",
-    value: "text-green-700",
+    icon: "bg-success-soft text-success",
+    value: "text-success",
   },
   warning: {
-    icon: "bg-yellow-100 text-yellow-700",
-    value: "text-yellow-700",
+    icon: "bg-warning-soft text-warning",
+    value: "text-warning",
   },
   danger: {
-    icon: "bg-red-100 text-red-700",
-    value: "text-red-700",
+    icon: "bg-danger-soft text-danger",
+    value: "text-danger",
   },
 };
 

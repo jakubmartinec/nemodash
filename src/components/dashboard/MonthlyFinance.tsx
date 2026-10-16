@@ -34,9 +34,9 @@ function FinanceSection({
     <div className="flex-1 min-w-0">
       <div className="flex items-center gap-1.5 mb-3">
         {variant === "income" ? (
-          <TrendingUp className="h-4 w-4 text-green-600" />
+          <TrendingUp className="h-4 w-4 text-success" />
         ) : (
-          <TrendingDown className="h-4 w-4 text-red-500" />
+          <TrendingDown className="h-4 w-4 text-danger" />
         )}
         <span className="text-sm font-medium">{title}</span>
       </div>
@@ -51,7 +51,7 @@ function FinanceSection({
       <div
         className={cn(
           "mt-3 pt-3 border-t border-border flex items-center justify-between",
-          variant === "income" ? "text-green-700" : "text-red-600"
+          variant === "income" ? "text-success" : "text-danger"
         )}
       >
         <span className="text-sm font-semibold">{totalLabel}</span>
@@ -115,9 +115,9 @@ export default function MonthlyFinance({ data }: MonthlyFinanceProps) {
         >
           <div className="flex items-center gap-1.5">
             {balance > 0 ? (
-              <TrendingUp className="h-4 w-4 text-green-600" />
+              <TrendingUp className="h-4 w-4 text-success" />
             ) : balance < 0 ? (
-              <TrendingDown className="h-4 w-4 text-red-500" />
+              <TrendingDown className="h-4 w-4 text-danger" />
             ) : (
               <Minus className="h-4 w-4 text-muted-foreground" />
             )}
@@ -126,7 +126,7 @@ export default function MonthlyFinance({ data }: MonthlyFinanceProps) {
           <span
             className={cn(
               "text-lg font-bold tabular-nums",
-              balance > 0 ? "text-green-700" : balance < 0 ? "text-red-600" : "text-foreground"
+              balance > 0 ? "text-success" : balance < 0 ? "text-danger" : "text-foreground"
             )}
           >
             {balance > 0 ? "+" : ""}

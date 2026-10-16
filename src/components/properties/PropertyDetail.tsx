@@ -101,8 +101,8 @@ export default function PropertyDetail({
                   className={cn(
                     "text-xs font-medium px-1.5 py-0.5 rounded",
                     property.ownership === "owned"
-                      ? "bg-blue-50 text-blue-700"
-                      : "bg-orange-50 text-orange-700"
+                      ? "bg-muted text-muted-foreground"
+                      : "bg-brand-soft text-brand-text"
                   )}
                 >
                   {t(`ownership.${property.ownership}`)}

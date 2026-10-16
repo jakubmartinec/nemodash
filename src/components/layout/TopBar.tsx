@@ -110,8 +110,8 @@ export default function TopBar({ locale, onMenuOpen }: TopBarProps) {
             <span
               aria-hidden="true"
               className={cn(
-                "absolute -right-0.5 -top-0.5 flex h-4 w-4 items-center justify-center rounded-full text-[10px] font-semibold leading-none text-white",
-                notifCount >= 5 ? "bg-red-500" : "bg-yellow-500"
+                "absolute -right-0.5 -top-0.5 flex h-4 w-4 items-center justify-center rounded-full text-[10px] font-semibold leading-none",
+                notifCount >= 5 ? "bg-danger-fill text-white" : "bg-warning-fill text-foreground"
               )}
             >
               {notifCount > 9 ? "9+" : notifCount}

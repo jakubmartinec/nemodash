@@ -17,9 +17,9 @@ interface TenantsTabProps {
 }
 
 const CONTRACT_STATUS_STYLES = {
-  active: "bg-green-50 text-green-700 border-green-200",
-  expiring_soon: "bg-yellow-50 text-yellow-700 border-yellow-200",
-  expired: "bg-red-50 text-red-700 border-red-200",
+  active: "bg-success-soft text-success border-success/30",
+  expiring_soon: "bg-warning-soft text-warning border-warning/30",
+  expired: "bg-danger-soft text-danger border-danger/30",
 } as const;
 
 // Odkaz do nájemnického portálu: zkopírovat / otevřít

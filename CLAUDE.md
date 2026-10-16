@@ -7,7 +7,7 @@ SaaS webová aplikace pro správu nemovitostí (domy, pozemky). Umožňuje evido
 ## Tech Stack
 
 - **Framework**: Next.js 16+ (App Router) s TypeScript
-- **Styling**: Tailwind CSS v4 + shadcn/ui (new-york styl, neutral barvy)
+- **Styling**: Tailwind CSS v4 + shadcn/ui, design systém Yard25 Grafit
 - **Databáze**: Firebase Firestore (zatím mock data, napojení později)
 - **Auth**: Firebase Auth (později)
 - **Storage**: Firebase Storage (později)
@@ -198,6 +198,12 @@ interface Contract {
 - Sdílené typy v `lib/types.ts`, nikdy `any`
 - Pojmenování: PascalCase pro komponenty, camelCase pro funkce a proměnné
 - České komentáře v kódu jsou OK
+
+### Design systém
+
+- Platí **Yard25 Grafit**: https://claude.ai/artifact/6hUcTb3z3puwywdqN2Zm6g (README a `tokens.json` v artefaktu). Před změnou vzhledu si je přečti.
+- Tokeny jsou namapované v `src/app/globals.css`. Používej sémantické třídy (`bg-background`, `bg-card`, `text-muted-foreground`, `bg-brand-soft text-brand-text`, `text-success|warning|danger`, `bg-*-soft`, `bg-*-fill`), nikdy natvrdo `green-600`, `indigo-…` apod.
+- Šedá je scéna, modrá je metrika: modrá jen pro data, odkazy, aktivní stav a focus; tlačítka grafitová (`bg-primary`). Linky místo stínů (`shadow-pop` jen pro plovoucí prvky), žádné gradienty ani barevné proužky na kartách. Písmo Inter.
 
 ### UI/UX principy
 

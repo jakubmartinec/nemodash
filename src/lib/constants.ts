@@ -20,12 +20,12 @@ export const CONTRACT_EXPIRING_THRESHOLD_DAYS = 90;
 
 // Barvy stavů (Tailwind třídy)
 export const STATUS_COLORS = {
-  valid: "text-green-600 bg-green-50 border-green-200",
-  expiring_soon: "text-yellow-600 bg-yellow-50 border-yellow-200",
-  expired: "text-red-600 bg-red-50 border-red-200",
-  paid: "text-green-600 bg-green-50 border-green-200",
-  pending: "text-yellow-600 bg-yellow-50 border-yellow-200",
-  overdue: "text-red-600 bg-red-50 border-red-200",
+  valid: "text-success bg-success-soft border-success/30",
+  expiring_soon: "text-warning bg-warning-soft border-warning/30",
+  expired: "text-danger bg-danger-soft border-danger/30",
+  paid: "text-success bg-success-soft border-success/30",
+  pending: "text-warning bg-warning-soft border-warning/30",
+  overdue: "text-danger bg-danger-soft border-danger/30",
 } as const;
 
 // Výpočet stavu revize podle data

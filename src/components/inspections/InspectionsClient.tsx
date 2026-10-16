@@ -18,19 +18,19 @@ type StatusFilter = "" | "valid" | "expiring_soon" | "expired";
 
 const STATUS_STYLES = {
   valid: {
-    dot: "bg-green-500",
-    badge: "bg-green-50 text-green-700 border-green-200",
-    summary: "text-green-700",
+    dot: "bg-success-fill",
+    badge: "bg-success-soft text-success border-success/30",
+    summary: "text-success",
   },
   expiring_soon: {
-    dot: "bg-yellow-400",
-    badge: "bg-yellow-50 text-yellow-700 border-yellow-200",
-    summary: "text-yellow-600",
+    dot: "bg-warning-fill",
+    badge: "bg-warning-soft text-warning border-warning/30",
+    summary: "text-warning",
   },
   expired: {
-    dot: "bg-red-500",
-    badge: "bg-red-50 text-red-700 border-red-200",
-    summary: "text-red-600",
+    dot: "bg-danger-fill",
+    badge: "bg-danger-soft text-danger border-danger/30",
+    summary: "text-danger",
   },
 } as const;
 
@@ -221,7 +221,7 @@ export default function InspectionsClient({ inspections, properties }: Inspectio
                       <td className="px-4 py-3 whitespace-nowrap">
                         <span
                           className={
-                            insp.status === "expired" ? "text-red-600 font-medium" : "text-muted-foreground"
+                            insp.status === "expired" ? "text-danger font-medium" : "text-muted-foreground"
                           }
                         >
                           {formatDate(insp.nextDueDate)}
@@ -279,7 +279,7 @@ export default function InspectionsClient({ inspections, properties }: Inspectio
                     </span>
                     <span>
                       <span className="opacity-70">{t("fields.nextDueDate")}: </span>
-                      <span className={insp.status === "expired" ? "text-red-600 font-medium" : ""}>
+                      <span className={insp.status === "expired" ? "text-danger font-medium" : ""}>
                         {formatDate(insp.nextDueDate)}
                       </span>
                     </span>
