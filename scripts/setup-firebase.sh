@@ -102,8 +102,13 @@ if ! gcloud iam service-accounts describe "$SA" >/dev/null 2>&1; then
   gcloud iam service-accounts create "$SA_NAME" --display-name="NemoDash – Vercel server" >/dev/null
 fi
 for ROLE in roles/datastore.user roles/firebaseauth.admin; do
-  gcloud projects add-iam-policy-binding "$P" --member="serviceAccount:$SA" --role="$ROLE" \
-    --condition=None >/dev/null
+  # čerstvě založený účet IAM chvíli nezná — zkoušíme až ~1 min
+  for TRY in $(seq 1 12); do
+    gcloud projects add-iam-policy-binding "$P" --member="serviceAccount:$SA" --role="$ROLE" \
+      --condition=None >/dev/null 2>/tmp/iamerr && break
+    [[ $TRY -eq 12 ]] && { cat /tmp/iamerr; exit 1; }
+    sleep 5
+  done
 done
 ok "$SA (Firestore + Auth)"
 if [[ -f "$KEY_FILE" ]]; then
