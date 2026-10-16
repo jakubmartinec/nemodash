@@ -1,16 +1,17 @@
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
 import { getTranslations } from "next-intl/server";
+import { getDataset } from "@/lib/data/store";
 import {
-  getPropertyById,
-  getTenantsByProperty,
-  getPaymentsByProperty,
-  getInspectionsByProperty,
-  getInsurancesByProperty,
-  getContractsByProperty,
-  getDocumentsByProperty,
-  getSettlementsByProperty,
-} from "@/lib/mock-data";
+  propertyById,
+  tenantsByProperty,
+  paymentsByProperty,
+  inspectionsByProperty,
+  insurancesByProperty,
+  contractsByProperty,
+  documentsByProperty,
+  settlementsByProperty,
+} from "@/lib/data/selectors";
 import PropertyDetail from "@/components/properties/PropertyDetail";
 
 export default async function PropertyDetailPage({
@@ -21,16 +22,17 @@ export default async function PropertyDetailPage({
   const { locale, id } = await params;
   const tCommon = await getTranslations("common");
 
-  const property = getPropertyById(id);
+  const ds = await getDataset();
+  const property = propertyById(ds, id);
   if (!property) notFound();
 
-  const tenants = getTenantsByProperty(id);
-  const payments = getPaymentsByProperty(id);
-  const inspections = getInspectionsByProperty(id);
-  const insurances = getInsurancesByProperty(id);
-  const contracts = getContractsByProperty(id);
-  const documents = getDocumentsByProperty(id);
-  const settlements = getSettlementsByProperty(id);
+  const tenants = tenantsByProperty(ds, id);
+  const payments = paymentsByProperty(ds, id);
+  const inspections = inspectionsByProperty(ds, id);
+  const insurances = insurancesByProperty(ds, id);
+  const contracts = contractsByProperty(ds, id);
+  const documents = documentsByProperty(ds, id);
+  const settlements = settlementsByProperty(ds, id);
 
   return (
     <Suspense fallback={<div className="p-8 text-muted-foreground text-sm">{tCommon("loading")}</div>}>

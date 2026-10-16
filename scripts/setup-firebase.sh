@@ -111,12 +111,13 @@ for ROLE in roles/datastore.user roles/firebaseauth.admin; do
   done
 done
 ok "$SA (Firestore + Auth)"
-if [[ -f "$KEY_FILE" ]]; then
+if [[ -s "$KEY_FILE" ]]; then
   ok "klíč už existuje: $KEY_FILE"
-elif gcloud iam service-accounts keys create "$KEY_FILE" --iam-account="$SA" 2>/tmp/keyerr; then
+elif rm -f "$KEY_FILE" && gcloud iam service-accounts keys create "$KEY_FILE" --iam-account="$SA" 2>/tmp/keyerr; then
   chmod 600 "$KEY_FILE"
   ok "klíč uložen: $KEY_FILE"
 else
+  rm -f "$KEY_FILE"
   warn "klíč nešel vytvořit: $(tail -1 /tmp/keyerr)"
   warn "pravděpodobně politika organizace zakazuje klíče — napište Claudovi, nastavíme OIDC"
 fi

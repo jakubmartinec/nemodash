@@ -7,7 +7,7 @@ import { Mail, Phone, Link2, Check, ExternalLink } from "lucide-react";
 import { cn } from "@/lib/utils";
 import type { Tenant, UtilitySettlement } from "@/lib/types";
 import SettlementCard from "@/components/settlements/SettlementCard";
-import { getContractStatus } from "@/lib/constants";
+import { getContractStatus, IS_LIVE_DATA } from "@/lib/constants";
 import { formatCZK, formatDate } from "@/lib/format";
 
 interface TenantsTabProps {
@@ -22,13 +22,13 @@ const CONTRACT_STATUS_STYLES = {
   expired: "bg-danger-soft text-danger border-danger/30",
 } as const;
 
-// Odkaz do nájemnického portálu: zkopírovat / otevřít
-function PortalLink({ href }: { href: string }) {
+// Odkaz do nájemnického portálu: zkopírovat (pro nájemníka) / otevřít (náhled správce)
+function PortalLink({ copyHref, openHref }: { copyHref: string; openHref: string }) {
   const t = useTranslations("tenantPortal");
   const [copied, setCopied] = useState(false);
 
   async function copy() {
-    await navigator.clipboard.writeText(new URL(href, window.location.origin).toString());
+    await navigator.clipboard.writeText(new URL(copyHref, window.location.origin).toString());
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
   }
@@ -45,7 +45,7 @@ function PortalLink({ href }: { href: string }) {
         {copied ? t("copied") : t("copy")}
       </button>
       <Link
-        href={href}
+        href={openHref}
         target="_blank"
         className="inline-flex items-center gap-1.5 rounded-md border border-border px-2.5 py-1 text-xs hover:bg-muted"
       >
@@ -158,7 +158,17 @@ export default function TenantsTab({ locale, tenants, settlements }: TenantsTabP
                     ))}
                   </div>
                 )}
-                {tenant.portalToken && <PortalLink href={`/${locale}/portal/${tenant.portalToken}`} />}
+                {IS_LIVE_DATA ? (
+                  // Nájemník se přihlašuje telefonem/e-mailem — sdílí se přihlašovací stránka
+                  <PortalLink copyHref={`/${locale}/login`} openHref={`/${locale}/portal?tenant=${tenant.id}`} />
+                ) : (
+                  tenant.portalToken && (
+                    <PortalLink
+                      copyHref={`/${locale}/portal/${tenant.portalToken}`}
+                      openHref={`/${locale}/portal/${tenant.portalToken}`}
+                    />
+                  )
+                )}
               </div>
             )}
 

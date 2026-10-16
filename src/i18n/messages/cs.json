@@ -426,5 +426,37 @@
     "copy": "Kopírovat odkaz",
     "copied": "Zkopírováno",
     "open": "Otevřít jako nájemník"
+  },
+  "auth": {
+    "title": "Přihlášení do NemoDash",
+    "subtitle": "Nájemníci se přihlásí telefonem nebo e-mailem, který mají uvedený u pronajímatele.",
+    "mode": {
+      "phone": "Telefon",
+      "email": "E-mail"
+    },
+    "phoneLabel": "Telefonní číslo",
+    "sendCode": "Poslat kód SMS",
+    "sending": "Odesílám…",
+    "codeSent": "Na číslo {phone} jsme poslali šestimístný kód.",
+    "codeLabel": "Kód z SMS",
+    "confirm": "Přihlásit",
+    "changePhone": "Zadat jiné číslo",
+    "emailLabel": "E-mail",
+    "sendLink": "Poslat přihlašovací odkaz",
+    "linkSentTitle": "Zkontrolujte e-mail",
+    "linkSentText": "Na {email} jsme poslali odkaz. Otevřete ho na tomto zařízení a budete přihlášeni.",
+    "emailConfirmText": "Pro dokončení přihlášení zadejte e-mail, na který přišel odkaz.",
+    "google": "Přihlásit přes Google",
+    "signOut": "Odhlásit",
+    "errors": {
+      "invalidPhone": "Telefonní číslo není platné. Zadejte ho i s předvolbou, např. +420 777 123 456.",
+      "invalidCode": "Kód nesouhlasí nebo vypršel. Zkuste to znovu.",
+      "tooManyRequests": "Příliš mnoho pokusů. Zkuste to prosím za chvíli.",
+      "invalidEmail": "E-mail není platný.",
+      "linkExpired": "Odkaz už neplatí. Nechte si poslat nový.",
+      "methodDisabled": "Tento způsob přihlášení není zapnutý.",
+      "noAccess": "K tomuto číslu ani e-mailu nemáme přístup. Kontaktujte pronajímatele.",
+      "generic": "Přihlášení se nepovedlo. Zkuste to znovu."
+    }
   }
 }
