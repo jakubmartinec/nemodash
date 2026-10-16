@@ -189,7 +189,7 @@ export default function PropertyDetail({
             />
           )}
           {activeTab === "tenants" && (
-            <TenantsTab locale={locale} tenants={tenants} settlements={settlements} />
+            <TenantsTab locale={locale} propertyId={property.id} tenants={tenants} settlements={settlements} />
           )}
           {activeTab === "payments" && <PaymentsTab payments={payments} />}
           {activeTab === "inspections" && <InspectionsTab inspections={inspections} />}

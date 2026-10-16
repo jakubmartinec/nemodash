@@ -151,7 +151,8 @@
       "monthlyRent": "Měsíční nájemné",
       "deposit": "Kauce",
       "notes": "Poznámky"
-    }
+    },
+    "newSettlement": "Nové vyúčtování"
   },
   "payments": {
     "title": "Platby",
@@ -292,7 +293,8 @@
     "profile": "Profil",
     "logout": "Odhlásit se",
     "home": "Domů",
-    "propertyDetail": "Detail nemovitosti"
+    "propertyDetail": "Detail nemovitosti",
+    "new": "Nový záznam"
   },
   "common": {
     "save": "Uložit",
@@ -457,6 +459,105 @@
       "methodDisabled": "Tento způsob přihlášení není zapnutý.",
       "noAccess": "K tomuto číslu ani e-mailu nemáme přístup. Kontaktujte pronajímatele.",
       "generic": "Přihlášení se nepovedlo. Zkuste to znovu."
+    }
+  },
+  "forms": {
+    "save": "Uložit",
+    "saving": "Ukládám…",
+    "cancel": "Zrušit",
+    "errors": {
+      "demo": "V demu se nic neukládá. Ukládání funguje s ostrými daty po přihlášení.",
+      "forbidden": "Na tuto akci nemáte oprávnění. Přihlaste se jako správce.",
+      "required": "Vyplňte prosím všechna povinná pole.",
+      "number": "Některé číslo není zadané správně.",
+      "date": "Některé datum není zadané správně.",
+      "notFound": "Nemovitost nebo nájemník už neexistuje.",
+      "meterOrder": "Konečný stav vodoměru musí být vyšší nebo stejný jako počáteční.",
+      "consumption": "Spotřeba bytu nemůže být vyšší než spotřeba celého domu."
+    },
+    "property": {
+      "title": "Nová nemovitost",
+      "basics": "Základní údaje",
+      "type": "Typ",
+      "ownership": "Vlastnictví",
+      "name": "Název",
+      "nameHint": "Jak ji budete v přehledu poznávat, např. „Dům Nerudova 435“.",
+      "address": "Adresa",
+      "cadastre": "Katastr",
+      "cadastralNumber": "Číslo LV",
+      "parcelNumbers": "Parcely",
+      "parcelNumbersHint": "Oddělte čárkou, např. 1234/1, 1234/2",
+      "area": "Plocha (m²)",
+      "other": "Další",
+      "description": "Popis",
+      "notes": "Poznámky"
+    },
+    "tenant": {
+      "title": "Nový nájemník",
+      "person": "Osoba",
+      "phoneHint": "Na toto číslo přijde SMS kód pro přihlášení do portálu.",
+      "emailHint": "Alternativa přihlášení odkazem e-mailem.",
+      "contract": "Smlouva",
+      "contractEndHint": "Prázdné = na dobu neurčitou",
+      "monthlyRent": "Měsíční nájemné (Kč)",
+      "deposit": "Kauce (Kč)",
+      "advances": "Měsíční zálohy na služby (Kč)",
+      "advanceWater": "Voda",
+      "advanceGas": "Plyn",
+      "advanceElectricity": "Elektřina"
+    },
+    "settlement": {
+      "title": "Nové vyúčtování",
+      "noTenants": "Nejdřív přidejte nájemníka.",
+      "who": "Komu a za co",
+      "tenant": "Nájemník",
+      "utility": "Služba",
+      "periodFrom": "Období od",
+      "periodTo": "Období do",
+      "months": "Počet měsíců záloh",
+      "monthsHint": "Předvyplní se podle období.",
+      "invoice": "Faktura za celý dům",
+      "supplier": "Dodavatel",
+      "invoiceNumber": "Číslo faktury",
+      "totalCost": "Celková částka (Kč)",
+      "totalCostHint": "Včetně DPH, za celý dům.",
+      "totalConsumption": "Celková spotřeba (m³)",
+      "totalConsumptionHint": "Podle hlavního vodoměru domu.",
+      "meter": "Podružný vodoměr bytu a zálohy",
+      "meterStart": "Počáteční stav (m³)",
+      "meterStartHint": "Předvyplněno z minulého vyúčtování.",
+      "meterEnd": "Konečný stav (m³)",
+      "monthlyAdvance": "Měsíční záloha (Kč)",
+      "monthlyAdvanceHint": "Předvyplněno z karty nájemníka.",
+      "payment": "Platba",
+      "issuedDate": "Datum vystavení",
+      "dueDate": "Splatnost",
+      "variableSymbol": "Variabilní symbol",
+      "newMonthlyAdvance": "Nová měsíční záloha (Kč)",
+      "newAdvanceFrom": "Nová záloha od",
+      "optional": "Nepovinné",
+      "preview": "Výsledek",
+      "previewEmpty": "Výsledek se spočítá po vyplnění faktury, stavů vodoměru a záloh.",
+      "previewConsumption": "Spotřeba bytu (m³)",
+      "previewUnitPrice": "Cena za m³",
+      "previewCost": "Podíl nájemníka",
+      "previewAdvances": "Zaplacené zálohy",
+      "outcome": {
+        "underpaid": "Nedoplatek",
+        "overpaid": "Přeplatek",
+        "even": "Vyrovnáno"
+      },
+      "submit": "Uložit vyúčtování"
+    },
+    "landlord": {
+      "title": "Pronajímatel",
+      "hint": "Tyto údaje uvidí nájemníci v portálu: komu napsat a kam poslat doplatek.",
+      "name": "Jméno",
+      "email": "E-mail",
+      "phone": "Telefon",
+      "bankAccount": "Číslo účtu",
+      "bankAccountHint": "Např. 123456789/0100",
+      "saved": "Uloženo."
     }
   }
 }

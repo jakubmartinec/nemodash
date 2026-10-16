@@ -22,7 +22,11 @@ const SEGMENT_KEYS: Record<string, string> = {
   payments: "nav.payments",
   inspections: "nav.inspections",
   settings: "nav.settings",
+  new: "layout.new",
 };
+
+// Mezisegmenty bez vlastní stránky (…/tenants/new, …/settlements/new)
+const SKIPPED_SEGMENTS = new Set(["tenants", "settlements"]);
 
 interface Crumb {
   label: string;
@@ -49,6 +53,7 @@ function useBreadcrumbs(
     const isLast = idx === segments.length - 1;
     const href = `/${locale}/${segments.slice(0, idx + 1).join("/")}`;
 
+    if (SKIPPED_SEGMENTS.has(seg)) return;
     if (SEGMENT_KEYS[seg]) {
       crumbs.push({ label: t(SEGMENT_KEYS[seg] as Parameters<typeof t>[0]), href: isLast ? undefined : href });
     } else {

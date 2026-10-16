@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { useTranslations } from "next-intl";
-import { Mail, Phone, Link2, Check, ExternalLink } from "lucide-react";
+import { Mail, Phone, Link2, Check, ExternalLink, UserPlus, Calculator } from "lucide-react";
 import { cn } from "@/lib/utils";
 import type { Tenant, UtilitySettlement } from "@/lib/types";
 import SettlementCard from "@/components/settlements/SettlementCard";
@@ -12,6 +12,7 @@ import { formatCZK, formatDate } from "@/lib/format";
 
 interface TenantsTabProps {
   locale: string;
+  propertyId: string;
   tenants: Tenant[];
   settlements: UtilitySettlement[];
 }
@@ -56,22 +57,48 @@ function PortalLink({ copyHref, openHref }: { copyHref: string; openHref: string
   );
 }
 
-export default function TenantsTab({ locale, tenants, settlements }: TenantsTabProps) {
+export default function TenantsTab({ locale, propertyId, tenants, settlements }: TenantsTabProps) {
   const t = useTranslations("properties");
   const tTen = useTranslations("tenants");
   const tCon = useTranslations("contracts");
   const tPortal = useTranslations("tenantPortal");
 
+  const base = `/${locale}/properties/${propertyId}`;
+  const actions = (
+    <div className="flex flex-wrap justify-end gap-2">
+      <Link
+        href={`${base}/tenants/new`}
+        className="inline-flex items-center gap-1.5 rounded-md border border-border px-3 py-1.5 text-sm hover:bg-muted"
+      >
+        <UserPlus className="h-4 w-4" />
+        {tTen("addTenant")}
+      </Link>
+      {tenants.length > 0 && (
+        <Link
+          href={`${base}/settlements/new`}
+          className="inline-flex items-center gap-1.5 rounded-md bg-primary px-3 py-1.5 text-sm font-medium text-primary-foreground hover:bg-primary/90"
+        >
+          <Calculator className="h-4 w-4" />
+          {tTen("newSettlement")}
+        </Link>
+      )}
+    </div>
+  );
+
   if (tenants.length === 0) {
     return (
-      <p className="py-10 text-center text-sm text-muted-foreground">
-        {t("noTenantsForProp")}
-      </p>
+      <div className="space-y-4">
+        {actions}
+        <p className="py-10 text-center text-sm text-muted-foreground">
+          {t("noTenantsForProp")}
+        </p>
+      </div>
     );
   }
 
   return (
     <div className="space-y-4">
+      {actions}
       {tenants.map((tenant) => {
         const tenantSettlements = settlements.filter((s) => s.tenantId === tenant.id);
         const contractStatus = getContractStatus(tenant.contractEnd);
