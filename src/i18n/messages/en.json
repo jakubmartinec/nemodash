@@ -437,6 +437,7 @@
       "email": "E-mail"
     },
     "phoneLabel": "Phone number",
+    "dialCode": "Country code",
     "sendCode": "Send SMS code",
     "sending": "Sending…",
     "codeSent": "We sent a six-digit code to {phone}.",

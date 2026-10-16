@@ -16,6 +16,7 @@ import {
   type UserCredential,
 } from "firebase/auth";
 import { firebaseAuth } from "@/lib/firebase/client";
+import { DIAL_CODES, splitPhone, toE164, type DialCode } from "@/lib/phone";
 import { cn } from "@/lib/utils";
 
 const EMAIL_KEY = "nemodash.signInEmail";
@@ -45,7 +46,8 @@ export default function LoginForm({ locale }: { locale: string }) {
   const t = useTranslations("auth");
   const [mode, setMode] = useState<Mode>("phone");
   const [step, setStep] = useState<Step>("enter");
-  const [phone, setPhone] = useState("+420 ");
+  const [dialCode, setDialCode] = useState<DialCode>("+420");
+  const [phone, setPhone] = useState("");
   const [code, setCode] = useState("");
   const [email, setEmail] = useState("");
   const [error, setError] = useState("");
@@ -69,6 +71,13 @@ export default function LoginForm({ locale }: { locale: string }) {
     }
     const { role } = (await res.json()) as { role: "admin" | "tenant" };
     window.location.assign(`/${locale}/${role === "admin" ? "dashboard" : "portal"}`);
+  }
+
+  // Automatické vyplnění vloží číslo s předvolbou i bez ní — předvolbu přepneme ve výběru
+  function changePhone(value: string) {
+    const parsed = splitPhone(value);
+    if (parsed.dialCode) setDialCode(parsed.dialCode);
+    setPhone(parsed.national);
   }
 
   async function run(action: () => Promise<void>, fallback: Step) {
@@ -107,7 +116,7 @@ export default function LoginForm({ locale }: { locale: string }) {
       setStep("busy");
       const auth = firebaseAuth();
       verifier.current ??= new RecaptchaVerifier(auth, "recaptcha", { size: "invisible" });
-      confirmation.current = await signInWithPhoneNumber(auth, phone.replace(/\s/g, ""), verifier.current);
+      confirmation.current = await signInWithPhoneNumber(auth, toE164(dialCode, phone), verifier.current);
       setStep("code");
     }, "enter");
   }
@@ -176,18 +185,32 @@ export default function LoginForm({ locale }: { locale: string }) {
 
       {mode === "phone" && step !== "code" && (
         <form onSubmit={sendCode} className="space-y-3">
-          <label className="block space-y-1">
-            <span className="text-sm font-medium">{t("phoneLabel")}</span>
-            <input
-              type="tel"
-              inputMode="tel"
-              autoComplete="tel"
-              required
-              value={phone}
-              onChange={(e) => setPhone(e.target.value)}
-              className={inputClass}
-            />
-          </label>
+          <div className="space-y-1">
+            <label htmlFor="login-phone" className="block text-sm font-medium">{t("phoneLabel")}</label>
+            <div className="flex gap-2">
+              <select
+                aria-label={t("dialCode")}
+                value={dialCode}
+                onChange={(e) => setDialCode(e.target.value as DialCode)}
+                className={cn(inputClass, "w-auto shrink-0")}
+              >
+                {DIAL_CODES.map(({ code, country }) => (
+                  <option key={code} value={code}>{`${country} ${code}`}</option>
+                ))}
+              </select>
+              <input
+                id="login-phone"
+                type="tel"
+                inputMode="tel"
+                autoComplete="tel"
+                required
+                placeholder="777 123 456"
+                value={phone}
+                onChange={(e) => changePhone(e.target.value)}
+                className={cn(inputClass, "min-w-0 flex-1")}
+              />
+            </div>
+          </div>
           <button type="submit" disabled={busy} className={primaryButton}>
             {busy ? t("sending") : t("sendCode")}
           </button>
@@ -196,7 +219,7 @@ export default function LoginForm({ locale }: { locale: string }) {
 
       {mode === "phone" && step === "code" && (
         <form onSubmit={confirmCode} className="space-y-3">
-          <p className="text-sm text-muted-foreground">{t("codeSent", { phone })}</p>
+          <p className="text-sm text-muted-foreground">{t("codeSent", { phone: toE164(dialCode, phone) })}</p>
           <label className="block space-y-1">
             <span className="text-sm font-medium">{t("codeLabel")}</span>
             <input

@@ -437,6 +437,7 @@
       "email": "E-mail"
     },
     "phoneLabel": "Telefonní číslo",
+    "dialCode": "Předvolba",
     "sendCode": "Poslat kód SMS",
     "sending": "Odesílám…",
     "codeSent": "Na číslo {phone} jsme poslali šestimístný kód.",
