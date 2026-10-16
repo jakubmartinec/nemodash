@@ -1,6 +1,6 @@
 # Předávka: ostrý provoz s Firebase (PR #4)
 
-Stav k 16. 10. 2026. Pro novou session Claude Code s připojeným **Vercel** konektorem
+Stav k 16. 10. 2026 (večer). Pro novou session Claude Code s připojeným **Vercel** konektorem
 (ideálně i `gcp-nemodash`). Repo je **veřejné** — žádná osobní data ani tajné hodnoty do gitu.
 
 ## Kde to je
@@ -25,42 +25,39 @@ Stav k 16. 10. 2026. Pro novou session Claude Code s připojeným **Vercel** kon
 Režim dat: `next.config.ts` nastaví `NEXT_PUBLIC_LIVE_DATA=1` při buildu na Vercelu (`VERCEL=1`)
 nebo s `FIREBASE_SERVICE_ACCOUNT`; lokálně běží demo data, `NEMODASH_DEMO=1` vynutí demo.
 
-## Aktuální problém: náhled vrací 500
+## Vyřešeno 16. 10. 2026
 
-Nasazení `GTV9shCYw` (commit `d779791`, redeploy bez cache) — build prošel, ale stránka
-(i `/` a `/cs/login`) vrací **500 Internal Server Error**. Runtime log zatím nikdo neviděl.
+- **500 na náhledu:** `firebase-admin/auth` → `jwks-rsa` dělal `require('jose')`, ale `jose` 6 je jen ESM
+  a runtime Vercelu `require()` ES modulu nepovolí (`ERR_REQUIRE_ESM`). Oprava: `overrides` v
+  `package.json` vrací `jwks-rsa` na `jose ^4.15.9` (má CJS). Lokální reprodukce:
+  `node --no-experimental-require-module node_modules/next/dist/bin/next start`.
+- **Přihlášení SMS:** ověřeno na náhledu, OIDC → Firestore funguje. Předvolba je samostatný výběr
+  (CZ/SK), automaticky vyplněné číslo v jakémkoli tvaru se rozpozná (`src/lib/phone.ts`).
 
-Pozorování: `/cs/login` bez cookie Firestore vůbec nevolá (`getSession` vrátí `null` dřív),
-přesto padá → nejpravděpodobněji selže **načtení serverového modulu**.
+## Dokumenty (fotky vyúčtování apod.)
 
-Hypotézy (od nejpravděpodobnější):
+- Bucket `gs://nemodash-dokumenty` (europe-west3, uniform access, public access prevention,
+  soft delete 7 dní) — založený. Název je v `DOCUMENTS_BUCKET` (`src/lib/firebase/admin.ts`).
+- **Chybí právo:** servisní účet potřebuje `roles/storage.objectAdmin` jen na tento bucket —
+  krok 6 v `scripts/setup-firebase.sh` (stačí pustit celý skript znovu, je idempotentní).
+- Server: `POST /api/documents` (jen správce, typ podle obsahu, max. 4 MB),
+  `GET|PATCH|DELETE /api/documents/[id]`. Nájemník stáhne jen dokument s `sharedWithTenant`
+  a svým `tenantId`; jinak 404.
+- Prohlížeč fotku zmenší na 2400 px JPEG (`src/lib/image-upload.ts`) — tím zmizí EXIF i GPS.
+- UI: záložka Dokumenty (nahrát, otevřít, stáhnout, zpřístupnit/skrýt, smazat), u vyúčtování
+  „Přiložit doklad“, v portálu nájemníka doklady u vyúčtování.
 
-1. `src/lib/firebase/admin.ts` importuje na nejvyšší úrovni `@google-cloud/firestore`,
-   `google-auth-library` a `@vercel/oidc`; `session.ts` ho importuje na každé stránce.
-   Při bundlování/trasování pro Vercel funkce může chybět soubor (google-gax/protobuf
-   `.proto`/`.json`) → pád při `require`. Oprava: v `next.config.ts` přidat
-   `serverExternalPackages: ["@google-cloud/firestore", "google-gax", "google-auth-library", "@vercel/oidc", "firebase-admin"]`
-   a/nebo importy Firestore/OIDC v `admin.ts` udělat líně (`await import(...)` uvnitř `adminDb()`).
-2. Chyba v `getSession()` / `cookies()` během renderu (méně pravděpodobné).
-3. Chyba až při volání Google (OIDC → STS) — to by ale nemělo nastat bez cookie.
+## Další kroky
 
-## Postup v nové session
+1. Uživatel pustí `scripts/setup-firebase.sh` v Cloud Shell (krok 6 — právo na bucket).
+2. Uživatel zadá ostrá data: Nastavení (pronajímatel), nemovitost Nerudova 435 (Nový Bor),
+   nájemnici, vyúčtování vody, přiloží fotku faktury. Údaje **nikdy necommitovat**.
+3. Ověřit v portálu (`/cs/portal?tenant=<id>` jako správce), že nájemnice doklad vidí.
+4. Když vše funguje: PR #4 z draftu do ready, uživatel mergne → produkce přejde na ostrá data.
+   Návrat: Vercel Instant Rollback.
 
-1. **Logy:** Vercel MCP `get_runtime_logs` / `get_runtime_errors` pro projekt `nemodash`
-   (team `jakub-martinecs-projects`), nasazení náhledu větve. Najít stack trace 500.
-2. **Lokální reprodukce:** `VERCEL=1 npm run build && ADMIN_PHONES=+420000000000 npx next start -p 3125`,
-   pak `curl -i localhost:3125/cs/login`. (Lokálně OIDC token chybí — `/cs/login` bez cookie
-   ale musí vrátit 200.)
-3. **Oprava** podle logu, ověřit `tsc`, `npm run lint`, `npm run build`, demo režim (`npm run build`
-   bez `VERCEL`) i lokální „live“ build. Commit + push na větev → Vercel nasadí náhled sám.
-4. **Ověření na náhledu:** Vercel MCP `web_fetch_vercel_url` (obejde ochranu náhledu):
-   `/cs/login` musí vrátit 200 a přihlašovací formulář; `POST /api/session` bez těla → 400.
-   Pak `get_runtime_logs`, že při načtení dat (po přihlášení) projde OIDC → Firestore.
-5. **Uživatel otestuje** přihlášení SMS na svém čísle (je v `ADMIN_PHONES`) a zadá ostrá data
-   ve formulářích: Nastavení (pronajímatel), nemovitost Nerudova 435 (Nový Bor), nájemnici,
-   vyúčtování vody. Údaje dodá uživatel — **nikdy je necommitovat**.
-6. Když vše funguje: PR #4 z draftu do ready, uživatel mergne → produkce přejde na ostrá data.
-   Případný návrat: Vercel Instant Rollback.
+Známé drobnosti mimo PR: stránky pod `(admin)` volají `getDataset()` souběžně s kontrolou
+přihlášení v layoutu (nepřihlášený požadavek zbytečně čte Firestore; data neodcházejí).
 
 ## Užitečné
 
