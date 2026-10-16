@@ -6,7 +6,7 @@ import "server-only";
 import { cert, getApp, getApps, initializeApp, type App, type Credential } from "firebase-admin/app";
 import { getAuth } from "firebase-admin/auth";
 import { Firestore } from "@google-cloud/firestore";
-import { ExternalAccountClient, type AuthClient } from "google-auth-library";
+import { ExternalAccountClient, JWT, type AuthClient } from "google-auth-library";
 import { getVercelOidcToken } from "@vercel/oidc";
 
 const PROJECT_ID = "nemodash";
@@ -14,8 +14,12 @@ const PROJECT_NUMBER = "986537155019";
 const SERVICE_ACCOUNT = `nemodash-vercel@${PROJECT_ID}.iam.gserviceaccount.com`;
 const WIF_AUDIENCE = `//iam.googleapis.com/projects/${PROJECT_NUMBER}/locations/global/workloadIdentityPools/vercel/providers/vercel`;
 
+// Privátní bucket na nahrané dokumenty (europe-west3, zakládá scripts/setup-firebase.sh)
+export const DOCUMENTS_BUCKET = "nemodash-dokumenty";
+
 let db: Firestore | undefined;
 let federated: AuthClient | undefined;
+let restClient: AuthClient | undefined;
 
 // Ostrá data: na Vercelu (nebo s klíčem). Rozhoduje se při buildu v next.config.ts.
 export function isFirebaseConfigured(): boolean {
@@ -81,4 +85,21 @@ export function adminDb(): Firestore {
 
 export function adminAuth() {
   return getAuth(adminApp());
+}
+
+// Přístupový token pro REST API Google Cloud (Cloud Storage)
+export async function adminAccessToken(): Promise<string> {
+  if (!restClient) {
+    const key = serviceAccountKey();
+    restClient = key
+      ? new JWT({
+          email: key.client_email,
+          key: key.private_key,
+          scopes: ["https://www.googleapis.com/auth/cloud-platform"],
+        })
+      : federatedClient();
+  }
+  const { token } = await restClient.getAccessToken();
+  if (!token) throw new Error("Google Cloud nevrátil přístupový token");
+  return token;
 }

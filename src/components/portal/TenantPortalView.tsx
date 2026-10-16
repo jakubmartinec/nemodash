@@ -4,8 +4,15 @@ import { cn } from "@/lib/utils";
 import { formatCZK, formatDate } from "@/lib/format";
 import { computeSettlement } from "@/lib/settlement";
 import { getDataset } from "@/lib/data/store";
-import { paymentsByTenant, propertyById, settlementsByTenant, tenantById } from "@/lib/data/selectors";
+import {
+  documentsForTenant,
+  paymentsByTenant,
+  propertyById,
+  settlementsByTenant,
+  tenantById,
+} from "@/lib/data/selectors";
 import SettlementCard from "@/components/settlements/SettlementCard";
+import DocumentLinks from "@/components/documents/DocumentLinks";
 import SignOutButton from "@/components/auth/SignOutButton";
 import type { UtilityKind } from "@/lib/types";
 
@@ -37,6 +44,7 @@ export default async function TenantPortalView({
   const t = await getTranslations({ locale, namespace: "portal" });
   const tSet = await getTranslations({ locale, namespace: "settlement" });
   const tPay = await getTranslations({ locale, namespace: "payments" });
+  const tDoc = await getTranslations({ locale, namespace: "documents" });
 
   const ds = await getDataset();
   const landlord = ds.landlord;
@@ -58,6 +66,10 @@ export default async function TenantPortalView({
   const open = settlements.filter((s) => !s.settledDate);
   const history = settlements.filter((s) => s.settledDate);
   const overdue = payments.filter((p) => p.status === "overdue");
+  // Jen dokumenty, které správce nájemníkovi zpřístupnil
+  const documents = documentsForTenant(ds, tenant.id);
+  const docsFor = (settlementId: string) => documents.filter((d) => d.relatedId === settlementId);
+  const otherDocs = documents.filter((d) => !settlements.some((s) => s.id === d.relatedId));
   const czk = (n: number, precise = false) => formatCZK(n, locale, precise);
   const utilityName = (u: UtilityKind) => tSet(`utility.${u}`).toLowerCase();
 
@@ -152,6 +164,7 @@ export default async function TenantPortalView({
         {open.map((s) => (
           <Section key={s.id} title={t("currentSettlement")}>
             <SettlementCard settlement={s} audience="tenant" />
+            <DocumentLinks documents={docsFor(s.id)} title={tDoc("attachments")} />
           </Section>
         ))}
 
@@ -203,11 +216,18 @@ export default async function TenantPortalView({
           <Section title={t("history")}>
             <div className="divide-y divide-border">
               {history.map((s) => (
-                <div key={s.id} className="py-3 first:pt-0 last:pb-0">
+                <div key={s.id} className="py-3 first:pt-0 last:pb-0 space-y-2">
                   <SettlementCard settlement={s} audience="tenant" compact />
+                  <DocumentLinks documents={docsFor(s.id)} />
                 </div>
               ))}
             </div>
+          </Section>
+        )}
+
+        {otherDocs.some((d) => d.storagePath) && (
+          <Section title={tDoc("portalTitle")}>
+            <DocumentLinks documents={otherDocs} />
           </Section>
         )}
 

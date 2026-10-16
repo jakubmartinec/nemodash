@@ -39,6 +39,12 @@ export const contractsByProperty = (ds: Dataset, id: string) => byProperty(ds.co
 export const documentsByProperty = (ds: Dataset, id: string) =>
   byProperty(ds.documents, id).sort((a, b) => b.uploadedAt.localeCompare(a.uploadedAt));
 
+// Dokumenty, které správce zpřístupnil nájemníkovi v portálu
+export const documentsForTenant = (ds: Dataset, tenantId: string) =>
+  ds.documents
+    .filter((d) => d.tenantId === tenantId && d.sharedWithTenant)
+    .sort((a, b) => b.uploadedAt.localeCompare(a.uploadedAt));
+
 // Vyúčtování nejnovější první
 export const settlementsByProperty = (ds: Dataset, id: string) =>
   byProperty(ds.settlements, id).sort((a, b) => b.periodTo.localeCompare(a.periodTo));

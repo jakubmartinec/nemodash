@@ -189,12 +189,25 @@ export default function PropertyDetail({
             />
           )}
           {activeTab === "tenants" && (
-            <TenantsTab locale={locale} propertyId={property.id} tenants={tenants} settlements={settlements} />
+            <TenantsTab
+              locale={locale}
+              propertyId={property.id}
+              tenants={tenants}
+              settlements={settlements}
+              documents={documents}
+            />
           )}
           {activeTab === "payments" && <PaymentsTab payments={payments} />}
           {activeTab === "inspections" && <InspectionsTab inspections={inspections} />}
           {activeTab === "insurance" && <InsuranceTab insurances={insurances} />}
-          {activeTab === "documents" && <DocumentsTab documents={documents} />}
+          {activeTab === "documents" && (
+            <DocumentsTab
+              propertyId={property.id}
+              documents={documents}
+              tenants={tenants}
+              settlements={settlements}
+            />
+          )}
         </div>
       </div>
     </div>

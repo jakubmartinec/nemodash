@@ -10,6 +10,7 @@
 #   4. Firestore pravidla: klient nesmí nic (data čte jen server přes Admin SDK)
 #   5. servisní účet pro Vercel (Firestore + Auth) a přístup bez klíče přes Vercel OIDC
 #      (Workload Identity Federation — klíče servisních účtů organizace zakazuje)
+#   6. privátní bucket na dokumenty (fotky vyúčtování apod.) — zapisuje do něj jen server
 #
 # Skript je idempotentní — dá se pustit opakovaně.
 set -euo pipefail
@@ -17,6 +18,7 @@ set -euo pipefail
 P="${PROJECT_ID:-nemodash}"
 SA_NAME="nemodash-vercel"
 SA="${SA_NAME}@${P}.iam.gserviceaccount.com"
+BUCKET="${BUCKET:-nemodash-dokumenty}"   # stejný název jako DOCUMENTS_BUCKET v src/lib/firebase/admin.ts
 VERCEL_TEAM="${VERCEL_TEAM:-jakub-martinecs-projects}"
 VERCEL_PROJECT="${VERCEL_PROJECT:-nemodash}"
 # včetně náhledu větve claude/… (Vercel ji zkracuje na nemodash-git-claude-property-ma-5ec480-…)
@@ -44,14 +46,14 @@ fail_if_error() { # vypíše chybu z odpovědi API a vrátí 1
   fi
 }
 
-step "1/5 API"
+step "1/6 API"
 gcloud services enable \
   firebase.googleapis.com identitytoolkit.googleapis.com \
   firestore.googleapis.com firebaserules.googleapis.com iam.googleapis.com \
-  iamcredentials.googleapis.com sts.googleapis.com
+  iamcredentials.googleapis.com sts.googleapis.com storage.googleapis.com
 ok "zapnuto"
 
-step "2/5 Přihlašování"
+step "2/6 Přihlašování"
 AUTH="https://identitytoolkit.googleapis.com/admin/v2/projects/$P/config"
 R="$(api PATCH "$AUTH?updateMask=signIn.email,signIn.phoneNumber,authorizedDomains" '{
   "signIn": {
@@ -68,7 +70,7 @@ R="$(api PATCH "$AUTH?updateMask=smsRegionConfig" '{
 }')"
 fail_if_error "$R" && ok "SMS povoleny jen pro CZ a SK" || warn "omezení SMS regionů nastavte ručně (Authentication → Settings → SMS region policy)"
 
-step "3/5 Webová aplikace"
+step "3/6 Webová aplikace"
 FB="https://firebase.googleapis.com/v1beta1"
 APP_ID="$(api GET "$FB/projects/$P/webApps" | jq -r '[.apps[]? | select(.state == "ACTIVE")][0].appId // empty')"
 if [[ -z "$APP_ID" ]]; then
@@ -87,7 +89,7 @@ else
 fi
 FIREBASE_CONFIG="$(api GET "$FB/projects/$P/webApps/$APP_ID/config" | jq -c '{apiKey, authDomain, projectId, storageBucket, messagingSenderId, appId}')"
 
-step "4/5 Firestore pravidla"
+step "4/6 Firestore pravidla"
 RULES=$'rules_version = \'2\';\nservice cloud.firestore {\n  match /databases/{database}/documents {\n    // Data čte a zapisuje jen server (Admin SDK), prohlížeč nesmí nic.\n    match /{document=**} {\n      allow read, write: if false;\n    }\n  }\n}\n'
 RS="$(api POST "https://firebaserules.googleapis.com/v1/projects/$P/rulesets" \
   "$(jq -n --arg c "$RULES" '{source: {files: [{name: "firestore.rules", content: $c}]}}')")"
@@ -102,7 +104,7 @@ if jq -e '.error.status == "ALREADY_EXISTS"' >/dev/null <<<"$R"; then
 fi
 fail_if_error "$R" && ok "nasazena (vše zakázáno pro klienty)"
 
-step "5/5 Přístup z Vercelu (bez klíče, přes OIDC)"
+step "5/6 Přístup z Vercelu (bez klíče, přes OIDC)"
 if ! gcloud iam service-accounts describe "$SA" >/dev/null 2>&1; then
   gcloud iam service-accounts create "$SA_NAME" --display-name="NemoDash – Vercel server" >/dev/null
 fi
@@ -135,6 +137,17 @@ gcloud iam service-accounts add-iam-policy-binding "$SA" --role=roles/iam.worklo
   --member="principalSet://iam.googleapis.com/projects/$PN/locations/global/workloadIdentityPools/vercel/attribute.project/$VERCEL_PROJECT" \
   >/dev/null
 ok "Vercel projekt $VERCEL_TEAM/$VERCEL_PROJECT smí jednat jako $SA_NAME"
+
+step "6/6 Úložiště dokumentů"
+# Frankfurt jako Firestore; bez veřejného přístupu; smazané soubory jdou 7 dní obnovit (soft delete)
+if ! gcloud storage buckets describe "gs://$BUCKET" >/dev/null 2>&1; then
+  gcloud storage buckets create "gs://$BUCKET" --location=europe-west3 \
+    --uniform-bucket-level-access --public-access-prevention >/dev/null
+fi
+# Právo jen na tento bucket, ne na celé úložiště projektu
+gcloud storage buckets add-iam-policy-binding "gs://$BUCKET" \
+  --member="serviceAccount:$SA" --role=roles/storage.objectAdmin >/dev/null
+ok "gs://$BUCKET (privátní, europe-west3) — $SA_NAME smí číst, zapisovat a mazat"
 
 step "Hotovo"
 cat <<EOF

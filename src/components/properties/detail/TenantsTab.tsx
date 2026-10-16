@@ -3,10 +3,11 @@
 import { useState } from "react";
 import Link from "next/link";
 import { useTranslations } from "next-intl";
-import { Mail, Phone, Link2, Check, ExternalLink, UserPlus, Calculator } from "lucide-react";
+import { Mail, Phone, Link2, Check, ExternalLink, UserPlus, Calculator, Paperclip } from "lucide-react";
 import { cn } from "@/lib/utils";
-import type { Tenant, UtilitySettlement } from "@/lib/types";
+import type { PropertyDocument, Tenant, UtilitySettlement } from "@/lib/types";
 import SettlementCard from "@/components/settlements/SettlementCard";
+import DocumentLinks from "@/components/documents/DocumentLinks";
 import { getContractStatus, IS_LIVE_DATA } from "@/lib/constants";
 import { formatCZK, formatDate } from "@/lib/format";
 
@@ -15,6 +16,7 @@ interface TenantsTabProps {
   propertyId: string;
   tenants: Tenant[];
   settlements: UtilitySettlement[];
+  documents: PropertyDocument[];
 }
 
 const CONTRACT_STATUS_STYLES = {
@@ -57,11 +59,12 @@ function PortalLink({ copyHref, openHref }: { copyHref: string; openHref: string
   );
 }
 
-export default function TenantsTab({ locale, propertyId, tenants, settlements }: TenantsTabProps) {
+export default function TenantsTab({ locale, propertyId, tenants, settlements, documents }: TenantsTabProps) {
   const t = useTranslations("properties");
   const tTen = useTranslations("tenants");
   const tCon = useTranslations("contracts");
   const tPortal = useTranslations("tenantPortal");
+  const tDoc = useTranslations("documents");
 
   const base = `/${locale}/properties/${propertyId}`;
   const actions = (
@@ -181,7 +184,21 @@ export default function TenantsTab({ locale, propertyId, tenants, settlements }:
                   <div className="space-y-3">
                     <p className="text-xs font-medium text-muted-foreground">{tPortal("settlements")}</p>
                     {tenantSettlements.map((s) => (
-                      <SettlementCard key={s.id} settlement={s} audience="owner" compact />
+                      <div key={s.id} className="space-y-2">
+                        <SettlementCard settlement={s} audience="owner" compact />
+                        <div className="flex flex-wrap items-end justify-between gap-2">
+                          <DocumentLinks documents={documents.filter((d) => d.relatedId === s.id)} />
+                          {IS_LIVE_DATA && (
+                            <Link
+                              href={`${base}?tab=documents&settlement=${s.id}`}
+                              className="inline-flex items-center gap-1.5 rounded-md border border-border px-2.5 py-1 text-xs hover:bg-muted"
+                            >
+                              <Paperclip className="h-3.5 w-3.5" />
+                              {tDoc("attach")}
+                            </Link>
+                          )}
+                        </div>
+                      </div>
                     ))}
                   </div>
                 )}
