@@ -19,7 +19,9 @@ SA_NAME="nemodash-vercel"
 SA="${SA_NAME}@${P}.iam.gserviceaccount.com"
 VERCEL_TEAM="${VERCEL_TEAM:-jakub-martinecs-projects}"
 VERCEL_PROJECT="${VERCEL_PROJECT:-nemodash}"
-DOMAINS='["localhost","'"$P"'.firebaseapp.com","'"$P"'.web.app","nemodash.yard25.com","nemodash.vercel.app"]'
+# včetně náhledu větve claude/… (Vercel ji zkracuje na nemodash-git-claude-property-ma-5ec480-…)
+DOMAINS='["localhost","'"$P"'.firebaseapp.com","'"$P"'.web.app","nemodash.yard25.com","nemodash.vercel.app",'
+DOMAINS+='"nemodash-git-claude-property-ma-5ec480-jakub-martinecs-projects.vercel.app"]'
 
 step() { printf '\n\033[1m== %s\033[0m\n' "$*"; }
 ok() { printf '   \033[32m✓\033[0m %s\n' "$*"; }
