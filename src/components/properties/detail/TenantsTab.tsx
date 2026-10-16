@@ -3,17 +3,20 @@
 import { useState } from "react";
 import Link from "next/link";
 import { useTranslations } from "next-intl";
-import { Mail, Phone, Link2, Check, ExternalLink } from "lucide-react";
+import { Mail, Phone, Link2, Check, ExternalLink, UserPlus, Calculator, Paperclip } from "lucide-react";
 import { cn } from "@/lib/utils";
-import type { Tenant, UtilitySettlement } from "@/lib/types";
+import type { PropertyDocument, Tenant, UtilitySettlement } from "@/lib/types";
 import SettlementCard from "@/components/settlements/SettlementCard";
-import { getContractStatus } from "@/lib/constants";
+import DocumentLinks from "@/components/documents/DocumentLinks";
+import { getContractStatus, IS_LIVE_DATA } from "@/lib/constants";
 import { formatCZK, formatDate } from "@/lib/format";
 
 interface TenantsTabProps {
   locale: string;
+  propertyId: string;
   tenants: Tenant[];
   settlements: UtilitySettlement[];
+  documents: PropertyDocument[];
 }
 
 const CONTRACT_STATUS_STYLES = {
@@ -22,13 +25,13 @@ const CONTRACT_STATUS_STYLES = {
   expired: "bg-danger-soft text-danger border-danger/30",
 } as const;
 
-// Odkaz do nájemnického portálu: zkopírovat / otevřít
-function PortalLink({ href }: { href: string }) {
+// Odkaz do nájemnického portálu: zkopírovat (pro nájemníka) / otevřít (náhled správce)
+function PortalLink({ copyHref, openHref }: { copyHref: string; openHref: string }) {
   const t = useTranslations("tenantPortal");
   const [copied, setCopied] = useState(false);
 
   async function copy() {
-    await navigator.clipboard.writeText(new URL(href, window.location.origin).toString());
+    await navigator.clipboard.writeText(new URL(copyHref, window.location.origin).toString());
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
   }
@@ -45,7 +48,7 @@ function PortalLink({ href }: { href: string }) {
         {copied ? t("copied") : t("copy")}
       </button>
       <Link
-        href={href}
+        href={openHref}
         target="_blank"
         className="inline-flex items-center gap-1.5 rounded-md border border-border px-2.5 py-1 text-xs hover:bg-muted"
       >
@@ -56,22 +59,49 @@ function PortalLink({ href }: { href: string }) {
   );
 }
 
-export default function TenantsTab({ locale, tenants, settlements }: TenantsTabProps) {
+export default function TenantsTab({ locale, propertyId, tenants, settlements, documents }: TenantsTabProps) {
   const t = useTranslations("properties");
   const tTen = useTranslations("tenants");
   const tCon = useTranslations("contracts");
   const tPortal = useTranslations("tenantPortal");
+  const tDoc = useTranslations("documents");
+
+  const base = `/${locale}/properties/${propertyId}`;
+  const actions = (
+    <div className="flex flex-wrap justify-end gap-2">
+      <Link
+        href={`${base}/tenants/new`}
+        className="inline-flex items-center gap-1.5 rounded-md border border-border px-3 py-1.5 text-sm hover:bg-muted"
+      >
+        <UserPlus className="h-4 w-4" />
+        {tTen("addTenant")}
+      </Link>
+      {tenants.length > 0 && (
+        <Link
+          href={`${base}/settlements/new`}
+          className="inline-flex items-center gap-1.5 rounded-md bg-primary px-3 py-1.5 text-sm font-medium text-primary-foreground hover:bg-primary/90"
+        >
+          <Calculator className="h-4 w-4" />
+          {tTen("newSettlement")}
+        </Link>
+      )}
+    </div>
+  );
 
   if (tenants.length === 0) {
     return (
-      <p className="py-10 text-center text-sm text-muted-foreground">
-        {t("noTenantsForProp")}
-      </p>
+      <div className="space-y-4">
+        {actions}
+        <p className="py-10 text-center text-sm text-muted-foreground">
+          {t("noTenantsForProp")}
+        </p>
+      </div>
     );
   }
 
   return (
     <div className="space-y-4">
+      {actions}
       {tenants.map((tenant) => {
         const tenantSettlements = settlements.filter((s) => s.tenantId === tenant.id);
         const contractStatus = getContractStatus(tenant.contractEnd);
@@ -154,11 +184,35 @@ export default function TenantsTab({ locale, tenants, settlements }: TenantsTabP
                   <div className="space-y-3">
                     <p className="text-xs font-medium text-muted-foreground">{tPortal("settlements")}</p>
                     {tenantSettlements.map((s) => (
-                      <SettlementCard key={s.id} settlement={s} audience="owner" compact />
+                      <div key={s.id} className="space-y-2">
+                        <SettlementCard settlement={s} audience="owner" compact />
+                        <div className="flex flex-wrap items-end justify-between gap-2">
+                          <DocumentLinks documents={documents.filter((d) => d.relatedId === s.id)} />
+                          {IS_LIVE_DATA && (
+                            <Link
+                              href={`${base}?tab=documents&settlement=${s.id}`}
+                              className="inline-flex items-center gap-1.5 rounded-md border border-border px-2.5 py-1 text-xs hover:bg-muted"
+                            >
+                              <Paperclip className="h-3.5 w-3.5" />
+                              {tDoc("attach")}
+                            </Link>
+                          )}
+                        </div>
+                      </div>
                     ))}
                   </div>
                 )}
-                {tenant.portalToken && <PortalLink href={`/${locale}/portal/${tenant.portalToken}`} />}
+                {IS_LIVE_DATA ? (
+                  // Nájemník se přihlašuje telefonem/e-mailem — sdílí se přihlašovací stránka
+                  <PortalLink copyHref={`/${locale}/login`} openHref={`/${locale}/portal?tenant=${tenant.id}`} />
+                ) : (
+                  tenant.portalToken && (
+                    <PortalLink
+                      copyHref={`/${locale}/portal/${tenant.portalToken}`}
+                      openHref={`/${locale}/portal/${tenant.portalToken}`}
+                    />
+                  )
+                )}
               </div>
             )}
 

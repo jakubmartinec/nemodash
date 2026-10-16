@@ -132,7 +132,10 @@ export interface PropertyDocument {
   propertyId: string;
   name: string;
   category: DocumentCategory;
-  relatedId?: string; // ID smlouvy, revize nebo pojistky
+  relatedId?: string; // ID smlouvy, revize, pojistky nebo vyúčtování
+  tenantId?: string; // nájemník, kterého se dokument týká
+  sharedWithTenant?: boolean; // nájemník ho vidí ve svém portálu
+  storagePath?: string; // objekt v Cloud Storage (jen ostrá data)
   uploadedAt: string;
   size?: number; // bajty
   mimeType?: string;

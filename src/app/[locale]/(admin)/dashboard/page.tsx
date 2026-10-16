@@ -13,15 +13,8 @@ import UpcomingEvents from "@/components/dashboard/UpcomingEvents";
 import MonthlyFinance, {
   type MonthlyFinanceData,
 } from "@/components/dashboard/MonthlyFinance";
-import {
-  mockProperties,
-  mockPayments,
-  mockInspections,
-  mockContracts,
-  getUpcomingEvents,
-  getPaymentsByProperty,
-  getInspectionsByProperty,
-} from "@/lib/mock-data";
+import { getDataset } from "@/lib/data/store";
+import { upcomingEvents, paymentsByProperty, inspectionsByProperty } from "@/lib/data/selectors";
 import { CONTRACT_EXPIRING_THRESHOLD_DAYS, getToday } from "@/lib/constants";
 import { formatCZK } from "@/lib/format";
 
@@ -32,17 +25,19 @@ export default async function DashboardPage({
 }) {
   const { locale } = await params;
   const t = await getTranslations({ locale, namespace: "dashboard" });
+  const ds = await getDataset();
+  const { properties, payments: allPayments, inspections: allInspections, contracts } = ds;
 
   // ── StatCard 1: nemovitosti ─────────────────────────────────────────────
-  const houses = mockProperties.filter((p) => p.type === "house").length;
-  const land = mockProperties.filter((p) => p.type === "land").length;
+  const houses = properties.filter((p) => p.type === "house").length;
+  const land = properties.filter((p) => p.type === "land").length;
 
   // ── StatCard 2: neuhrazené platby ───────────────────────────────────────
-  const overduePayments = mockPayments.filter((p) => p.status === "overdue");
+  const overduePayments = allPayments.filter((p) => p.status === "overdue");
   const overdueTotal = overduePayments.reduce((s, p) => s + p.amount, 0);
 
   // ── StatCard 3: blížící se revize (expired + expiring_soon) ─────────────
-  const problemInspections = mockInspections.filter(
+  const problemInspections = allInspections.filter(
     (i) => i.status === "expired" || i.status === "expiring_soon"
   );
 
@@ -51,16 +46,16 @@ export default async function DashboardPage({
   const threshold90 = new Date(
     now.getTime() + CONTRACT_EXPIRING_THRESHOLD_DAYS * 24 * 60 * 60 * 1000
   );
-  const expiringContracts = mockContracts.filter((c) => {
+  const expiringContracts = contracts.filter((c) => {
     if (!c.endDate) return false;
     const end = new Date(c.endDate);
     return end <= threshold90;
   });
 
   // ── PropertyOverview: stavový souhrn pro každou nemovitost ──────────────
-  const propertyItems: PropertyStatusSummary[] = mockProperties.map((property) => {
-    const payments = getPaymentsByProperty(property.id);
-    const inspections = getInspectionsByProperty(property.id);
+  const propertyItems: PropertyStatusSummary[] = properties.map((property) => {
+    const payments = paymentsByProperty(ds, property.id);
+    const inspections = inspectionsByProperty(ds, property.id);
 
     let paymentStatus: PropertyStatusSummary["paymentStatus"] = "ok";
     if (payments.some((p) => p.status === "overdue")) paymentStatus = "danger";
@@ -77,11 +72,11 @@ export default async function DashboardPage({
   });
 
   // ── UpcomingEvents ───────────────────────────────────────────────────────
-  const events = getUpcomingEvents(90);
+  const events = upcomingEvents(ds, 90);
 
-  // ── MonthlyFinance: platby s dueDate v 2026-03 ──────────────────────────
-  const CURRENT_MONTH = "2026-03";
-  const monthlyPayments = mockPayments.filter((p) =>
+  // ── MonthlyFinance: platby se splatností v aktuálním měsíci ──────────────
+  const CURRENT_MONTH = now.toISOString().slice(0, 7);
+  const monthlyPayments = allPayments.filter((p) =>
     p.dueDate.startsWith(CURRENT_MONTH)
   );
 
@@ -140,7 +135,7 @@ export default async function DashboardPage({
         <StatCard
           icon={Building2}
           label={t("stats.totalProperties")}
-          value={mockProperties.length}
+          value={properties.length}
           subtext={t("statsSubtext.properties", { houses, land })}
           variant="default"
         />
