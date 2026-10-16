@@ -126,23 +126,23 @@ export default function TenantsTab({ locale, tenants, settlements }: TenantsTabP
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
               <div>
                 <p className="text-xs text-muted-foreground">{tTen("fields.monthlyRent")}</p>
-                <p className="text-sm font-semibold">{formatCZK(tenant.monthlyRent)}</p>
+                <p className="text-sm font-semibold">{formatCZK(tenant.monthlyRent, locale)}</p>
                 <p className="text-xs text-muted-foreground">{t("contractMonthly")}</p>
               </div>
               {tenant.deposit && (
                 <div>
                   <p className="text-xs text-muted-foreground">{t("deposit")}</p>
-                  <p className="text-sm font-semibold">{formatCZK(tenant.deposit)}</p>
+                  <p className="text-sm font-semibold">{formatCZK(tenant.deposit, locale)}</p>
                 </div>
               )}
               <div>
                 <p className="text-xs text-muted-foreground">{tTen("fields.contractStart")}</p>
-                <p className="text-sm">{formatDate(tenant.contractStart)}</p>
+                <p className="text-sm">{formatDate(tenant.contractStart, locale)}</p>
               </div>
               {tenant.contractEnd && (
                 <div>
                   <p className="text-xs text-muted-foreground">{tTen("fields.contractEnd")}</p>
-                  <p className="text-sm">{formatDate(tenant.contractEnd)}</p>
+                  <p className="text-sm">{formatDate(tenant.contractEnd, locale)}</p>
                 </div>
               )}
             </div>

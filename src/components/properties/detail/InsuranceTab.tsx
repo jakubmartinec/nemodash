@@ -1,4 +1,4 @@
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { Shield } from "lucide-react";
 import { cn } from "@/lib/utils";
 import type { Insurance } from "@/lib/types";
@@ -33,6 +33,7 @@ const STATUS_LABELS = {
 
 export default function InsuranceTab({ insurances }: InsuranceTabProps) {
   const t = useTranslations("properties");
+  const locale = useLocale();
   const tIns = useTranslations("insurance");
   const tCon = useTranslations("contracts");
 
@@ -72,12 +73,12 @@ export default function InsuranceTab({ insurances }: InsuranceTabProps) {
               <div>
                 <p className="text-xs text-muted-foreground">{t("validUntil")}</p>
                 <p className={status === "expired" ? "text-danger font-medium" : ""}>
-                  {formatDate(ins.endDate)}
+                  {formatDate(ins.endDate, locale)}
                 </p>
               </div>
               <div>
                 <p className="text-xs text-muted-foreground">{t("annualPremium")}</p>
-                <p className="font-semibold">{formatCZK(ins.annualPremium)}</p>
+                <p className="font-semibold">{formatCZK(ins.annualPremium, locale)}</p>
               </div>
             </div>
 

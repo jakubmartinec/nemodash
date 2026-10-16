@@ -25,3 +25,12 @@ export function formatDate(dateStr: string, locale = "cs"): string {
 export function formatNumber(value: number, locale = "cs", maximumFractionDigits = 0): string {
   return new Intl.NumberFormat(intlLocale(locale), { maximumFractionDigits }).format(value);
 }
+
+// Měsíc z "YYYY-MM", např. "Březen 2026" / "March 2026"
+export function formatMonth(ym: string, locale = "cs"): string {
+  const [year, month] = ym.split("-").map(Number);
+  const label = new Intl.DateTimeFormat(intlLocale(locale), { month: "long", year: "numeric" }).format(
+    new Date(year, month - 1, 1)
+  );
+  return label.charAt(0).toUpperCase() + label.slice(1);
+}

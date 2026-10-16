@@ -1,7 +1,7 @@
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { cn } from "@/lib/utils";
 import type { Inspection } from "@/lib/types";
-import { formatDate } from "@/lib/format";
+import { formatCZK, formatDate } from "@/lib/format";
 
 interface InspectionsTabProps {
   inspections: Inspection[];
@@ -24,6 +24,7 @@ const STATUS_STYLES = {
 
 export default function InspectionsTab({ inspections }: InspectionsTabProps) {
   const t = useTranslations("properties");
+  const locale = useLocale();
   const tInsp = useTranslations("inspections");
 
   if (inspections.length === 0) {
@@ -61,12 +62,12 @@ export default function InspectionsTab({ inspections }: InspectionsTabProps) {
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-sm">
               <div>
                 <p className="text-xs text-muted-foreground">{tInsp("fields.lastDate")}</p>
-                <p>{formatDate(insp.lastDate)}</p>
+                <p>{formatDate(insp.lastDate, locale)}</p>
               </div>
               <div>
                 <p className="text-xs text-muted-foreground">{tInsp("fields.nextDueDate")}</p>
                 <p className={insp.status === "expired" ? "text-danger font-medium" : ""}>
-                  {formatDate(insp.nextDueDate)}
+                  {formatDate(insp.nextDueDate, locale)}
                 </p>
               </div>
               {insp.provider && (
@@ -79,11 +80,7 @@ export default function InspectionsTab({ inspections }: InspectionsTabProps) {
                 <div>
                   <p className="text-xs text-muted-foreground">{tInsp("fields.cost")}</p>
                   <p>
-                    {new Intl.NumberFormat("cs-CZ", {
-                      style: "currency",
-                      currency: "CZK",
-                      maximumFractionDigits: 0,
-                    }).format(insp.cost)}
+                    {formatCZK(insp.cost, locale)}
                   </p>
                 </div>
               )}

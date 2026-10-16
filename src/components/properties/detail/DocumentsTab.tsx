@@ -1,7 +1,7 @@
 "use client";
 
 import { useRef } from "react";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import {
   FileText,
   FileImage,
@@ -42,6 +42,7 @@ function formatFileSize(bytes?: number): string {
 
 export default function DocumentsTab({ documents }: DocumentsTabProps) {
   const t = useTranslations("properties");
+  const locale = useLocale();
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   function handleUploadClick() {
@@ -123,7 +124,7 @@ export default function DocumentsTab({ documents }: DocumentsTabProps) {
                 <span className={"text-xs font-medium px-1.5 py-0.5 rounded border border-border bg-muted text-muted-foreground"}>
                   {t(`documentCategory.${doc.category}` as Parameters<typeof t>[0])}
                 </span>
-                <span className="text-xs text-muted-foreground">{formatDate(doc.uploadedAt)}</span>
+                <span className="text-xs text-muted-foreground">{formatDate(doc.uploadedAt, locale)}</span>
                 {doc.size && (
                   <span className="text-xs text-muted-foreground">{formatFileSize(doc.size)}</span>
                 )}

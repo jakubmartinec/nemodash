@@ -1,4 +1,4 @@
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { cn } from "@/lib/utils";
 import type { UpcomingEvent } from "@/lib/mock-data";
 import { formatDate } from "@/lib/format";
@@ -46,6 +46,7 @@ function daysDiff(dateStr: string): number {
 
 export default function UpcomingEvents({ events }: UpcomingEventsProps) {
   const t = useTranslations();
+  const locale = useLocale();
   const displayed = events.slice(0, 10);
 
   if (displayed.length === 0) {
@@ -119,7 +120,7 @@ export default function UpcomingEvents({ events }: UpcomingEventsProps) {
                 >
                   {relativeLabel}
                 </p>
-                <p className="text-xs text-muted-foreground">{formatDate(event.dueDate, "cs")}</p>
+                <p className="text-xs text-muted-foreground">{formatDate(event.dueDate, locale)}</p>
               </div>
             </li>
           );
