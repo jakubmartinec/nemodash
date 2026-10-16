@@ -1,11 +1,11 @@
 "use client";
 
 import { useState, useMemo, useCallback } from "react";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { ArrowDownLeft, ArrowUpRight, ChevronsUpDown, ChevronUp, ChevronDown } from "lucide-react";
 import { cn } from "@/lib/utils";
 import type { Payment, Property, PaymentType, PaymentStatus, PaymentDirection } from "@/lib/types";
-import { formatCZK, formatDate } from "@/lib/format";
+import { formatCZK, formatDate, formatMonth } from "@/lib/format";
 
 interface PaymentsClientProps {
   payments: Payment[];
@@ -21,13 +21,6 @@ const STATUS_PILL = {
   overdue: "bg-danger-soft text-danger border-danger/30",
 } as const;
 
-function formatPeriodLabel(ym: string): string {
-  const [year, month] = ym.split("-");
-  const date = new Date(parseInt(year), parseInt(month) - 1, 1);
-  const label = new Intl.DateTimeFormat("cs-CZ", { month: "long", year: "numeric" }).format(date);
-  return label.charAt(0).toUpperCase() + label.slice(1);
-}
-
 const PAYMENT_TYPES: PaymentType[] = [
   "rent", "lease", "energy_electricity", "energy_gas", "energy_water",
   "waste", "tax", "insurance", "maintenance", "other",
@@ -37,6 +30,7 @@ const PAYMENT_DIRECTIONS: PaymentDirection[] = ["incoming", "outgoing"];
 
 export default function PaymentsClient({ payments, properties }: PaymentsClientProps) {
   const t = useTranslations("payments");
+  const locale = useLocale();
 
   const [propertyFilter, setPropertyFilter] = useState("");
   const [typeFilter, setTypeFilter] = useState("");
@@ -122,11 +116,11 @@ export default function PaymentsClient({ payments, properties }: PaymentsClientP
       <div className="grid grid-cols-3 gap-3">
         <div className="rounded-lg border border-border bg-card p-4 text-center">
           <p className="text-xs text-muted-foreground mb-1">{t("summaryIncome")}</p>
-          <p className="text-lg font-bold text-success">{formatCZK(summary.income)}</p>
+          <p className="text-lg font-bold text-success">{formatCZK(summary.income, locale)}</p>
         </div>
         <div className="rounded-lg border border-border bg-card p-4 text-center">
           <p className="text-xs text-muted-foreground mb-1">{t("summaryExpenses")}</p>
-          <p className="text-lg font-bold">{formatCZK(summary.expenses)}</p>
+          <p className="text-lg font-bold">{formatCZK(summary.expenses, locale)}</p>
         </div>
         <div className="rounded-lg border border-border bg-card p-4 text-center">
           <p className="text-xs text-muted-foreground mb-1">{t("fields.status")}</p>
@@ -205,7 +199,7 @@ export default function PaymentsClient({ payments, properties }: PaymentsClientP
         >
           <option value="">{t("filterAllPeriods")}</option>
           {periods.map((ym) => (
-            <option key={ym} value={ym}>{formatPeriodLabel(ym)}</option>
+            <option key={ym} value={ym}>{formatMonth(ym, locale)}</option>
           ))}
         </select>
       </div>
@@ -265,15 +259,15 @@ export default function PaymentsClient({ payments, properties }: PaymentsClientP
                             payment.direction === "incoming" ? "text-success" : ""
                           }
                         >
-                          {formatCZK(payment.amount)}
+                          {formatCZK(payment.amount, locale)}
                         </span>
                       </span>
                     </td>
                     <td className="px-4 py-3 text-muted-foreground whitespace-nowrap">
-                      {formatDate(payment.dueDate)}
+                      {formatDate(payment.dueDate, locale)}
                     </td>
                     <td className="px-4 py-3 text-muted-foreground whitespace-nowrap">
-                      {payment.paidDate ? formatDate(payment.paidDate) : "—"}
+                      {payment.paidDate ? formatDate(payment.paidDate, locale) : "—"}
                     </td>
                     <td className="px-4 py-3">
                       <span
@@ -303,7 +297,7 @@ export default function PaymentsClient({ payments, properties }: PaymentsClientP
                   <p className="text-xs text-muted-foreground mt-0.5">
                     {t(`type.${payment.type}` as Parameters<typeof t>[0])}
                     {" · "}
-                    {formatDate(payment.dueDate)}
+                    {formatDate(payment.dueDate, locale)}
                   </p>
                 </div>
                 <div className="text-right shrink-0">
@@ -318,7 +312,7 @@ export default function PaymentsClient({ payments, properties }: PaymentsClientP
                     ) : (
                       <ArrowUpRight className="inline h-3.5 w-3.5 mr-0.5" />
                     )}
-                    {formatCZK(payment.amount)}
+                    {formatCZK(payment.amount, locale)}
                   </p>
                   <span
                     className={cn(

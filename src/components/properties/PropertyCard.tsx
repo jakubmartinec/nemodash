@@ -2,6 +2,7 @@ import Link from "next/link";
 import { useTranslations } from "next-intl";
 import { Building2, Sprout, MapPin, FileText, Ruler } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { formatNumber } from "@/lib/format";
 import type { Property } from "@/lib/types";
 
 type StatusLevel = "ok" | "warning" | "danger" | "none";
@@ -135,7 +136,7 @@ export default function PropertyCard({ data, locale }: PropertyCardProps) {
           <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
             <Ruler className="h-3.5 w-3.5 shrink-0" />
             <span>
-              {new Intl.NumberFormat("cs-CZ").format(property.area)}{" "}
+              {formatNumber(property.area, locale)}{" "}
               {t("areaUnit")}
             </span>
           </div>

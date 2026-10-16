@@ -152,7 +152,7 @@ export default async function DashboardPage({
             overduePayments.length > 0
               ? t("statsSubtext.overduePayments", {
                   count: overduePayments.length,
-                  amount: formatCZK(overdueTotal),
+                  amount: formatCZK(overdueTotal, locale),
                 })
               : undefined
           }

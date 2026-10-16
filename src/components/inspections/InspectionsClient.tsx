@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useMemo, useCallback } from "react";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { ChevronsUpDown, ChevronUp, ChevronDown } from "lucide-react";
 import { cn } from "@/lib/utils";
 import type { Inspection, Property, InspectionType } from "@/lib/types";
@@ -41,6 +41,7 @@ const INSPECTION_TYPES: InspectionType[] = [
 
 export default function InspectionsClient({ inspections, properties }: InspectionsClientProps) {
   const t = useTranslations("inspections");
+  const locale = useLocale();
 
   const [propertyFilter, setPropertyFilter] = useState("");
   const [typeFilter, setTypeFilter] = useState("");
@@ -216,7 +217,7 @@ export default function InspectionsClient({ inspections, properties }: Inspectio
                         {t(`type.${insp.type}` as Parameters<typeof t>[0])}
                       </td>
                       <td className="px-4 py-3 text-muted-foreground whitespace-nowrap">
-                        {formatDate(insp.lastDate)}
+                        {formatDate(insp.lastDate, locale)}
                       </td>
                       <td className="px-4 py-3 whitespace-nowrap">
                         <span
@@ -224,7 +225,7 @@ export default function InspectionsClient({ inspections, properties }: Inspectio
                             insp.status === "expired" ? "text-danger font-medium" : "text-muted-foreground"
                           }
                         >
-                          {formatDate(insp.nextDueDate)}
+                          {formatDate(insp.nextDueDate, locale)}
                         </span>
                       </td>
                       <td className="px-4 py-3">
@@ -275,12 +276,12 @@ export default function InspectionsClient({ inspections, properties }: Inspectio
                   <div className="flex gap-4 text-xs text-muted-foreground">
                     <span>
                       <span className="opacity-70">{t("fields.lastDate")}: </span>
-                      {formatDate(insp.lastDate)}
+                      {formatDate(insp.lastDate, locale)}
                     </span>
                     <span>
                       <span className="opacity-70">{t("fields.nextDueDate")}: </span>
                       <span className={insp.status === "expired" ? "text-danger font-medium" : ""}>
-                        {formatDate(insp.nextDueDate)}
+                        {formatDate(insp.nextDueDate, locale)}
                       </span>
                     </span>
                   </div>

@@ -12,6 +12,7 @@ import {
   Edit2,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { formatNumber } from "@/lib/format";
 import type { Property, Tenant, Payment, Inspection, Insurance, Contract, PropertyDocument, UtilitySettlement } from "@/lib/types";
 import OverviewTab from "./detail/OverviewTab";
 import TenantsTab from "./detail/TenantsTab";
@@ -144,7 +145,7 @@ export default function PropertyDetail({
           {property.area && (
             <div className="flex items-center gap-1.5 text-sm text-muted-foreground">
               <Ruler className="h-3.5 w-3.5 shrink-0" />
-              {new Intl.NumberFormat("cs-CZ").format(property.area)} {t("areaUnit")}
+              {formatNumber(property.area, locale)} {t("areaUnit")}
             </div>
           )}
         </div>

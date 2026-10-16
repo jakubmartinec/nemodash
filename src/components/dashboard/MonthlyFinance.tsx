@@ -1,4 +1,4 @@
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { TrendingUp, TrendingDown, Minus } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { formatCZK } from "@/lib/format";
@@ -30,6 +30,7 @@ function FinanceSection({
   total: number;
   variant: "income" | "expense";
 }) {
+  const locale = useLocale();
   return (
     <div className="flex-1 min-w-0">
       <div className="flex items-center gap-1.5 mb-3">
@@ -44,7 +45,7 @@ function FinanceSection({
         {lines.map((line) => (
           <li key={line.label} className="flex items-center justify-between gap-2">
             <span className="text-sm text-muted-foreground">{line.label}</span>
-            <span className="text-sm tabular-nums">{formatCZK(line.amount)}</span>
+            <span className="text-sm tabular-nums">{formatCZK(line.amount, locale)}</span>
           </li>
         ))}
       </ul>
@@ -55,7 +56,7 @@ function FinanceSection({
         )}
       >
         <span className="text-sm font-semibold">{totalLabel}</span>
-        <span className="text-sm font-bold tabular-nums">{formatCZK(total)}</span>
+        <span className="text-sm font-bold tabular-nums">{formatCZK(total, locale)}</span>
       </div>
     </div>
   );
@@ -63,6 +64,7 @@ function FinanceSection({
 
 export default function MonthlyFinance({ data }: MonthlyFinanceProps) {
   const t = useTranslations("dashboard");
+  const locale = useLocale();
   const tCommon = useTranslations("common");
 
   const totalIncome = data.incomeLines.reduce((s, l) => s + l.amount, 0);
@@ -130,7 +132,7 @@ export default function MonthlyFinance({ data }: MonthlyFinanceProps) {
             )}
           >
             {balance > 0 ? "+" : ""}
-            {formatCZK(balance)}
+            {formatCZK(balance, locale)}
           </span>
         </div>
       </div>

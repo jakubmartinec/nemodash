@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useMemo } from "react";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { ArrowDownLeft, ArrowUpRight } from "lucide-react";
 import { cn } from "@/lib/utils";
 import type { Payment, PaymentStatus } from "@/lib/types";
@@ -21,6 +21,7 @@ type Filter = "all" | PaymentStatus;
 
 export default function PaymentsTab({ payments }: PaymentsTabProps) {
   const t = useTranslations("properties");
+  const locale = useLocale();
   const tPay = useTranslations("payments");
 
   const [filter, setFilter] = useState<Filter>("all");
@@ -125,11 +126,11 @@ export default function PaymentsTab({ payments }: PaymentsTabProps) {
                     }
                   >
                     {payment.direction === "incoming" ? "+" : "−"}
-                    {formatCZK(payment.amount)}
+                    {formatCZK(payment.amount, locale)}
                   </span>
                 </td>
                 <td className="px-4 py-3 text-muted-foreground whitespace-nowrap">
-                  {formatDate(payment.dueDate)}
+                  {formatDate(payment.dueDate, locale)}
                 </td>
                 <td className="px-4 py-3">
                   <span
@@ -160,7 +161,7 @@ export default function PaymentsTab({ payments }: PaymentsTabProps) {
           )}
         >
           {totalAmount >= 0 ? "+" : ""}
-          {formatCZK(totalAmount)}
+          {formatCZK(totalAmount, locale)}
         </span>
       </div>
     </div>
