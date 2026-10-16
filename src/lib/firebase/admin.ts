@@ -1,28 +1,80 @@
 import "server-only";
 
-// Firebase Admin SDK — server čte a zapisuje Firestore a ověřuje přihlášení.
-// Klíč servisního účtu je ve Vercelu v proměnné FIREBASE_SERVICE_ACCOUNT (celý JSON).
-import { cert, getApp, getApps, initializeApp, type App } from "firebase-admin/app";
+// Serverový přístup k Firestore a Firebase Auth.
+// Na Vercelu bez klíče: Vercel OIDC token → Workload Identity Federation → servisní účet nemodash-vercel
+// (nastavuje scripts/setup-firebase.sh). Klíč v FIREBASE_SERVICE_ACCOUNT je jen záložní varianta.
+import { cert, getApp, getApps, initializeApp, type App, type Credential } from "firebase-admin/app";
 import { getAuth } from "firebase-admin/auth";
-import { getFirestore, type Firestore } from "firebase-admin/firestore";
+import { Firestore } from "@google-cloud/firestore";
+import { ExternalAccountClient, type AuthClient } from "google-auth-library";
+import { getVercelOidcToken } from "@vercel/oidc";
+
+const PROJECT_ID = "nemodash";
+const PROJECT_NUMBER = "986537155019";
+const SERVICE_ACCOUNT = `nemodash-vercel@${PROJECT_ID}.iam.gserviceaccount.com`;
+const WIF_AUDIENCE = `//iam.googleapis.com/projects/${PROJECT_NUMBER}/locations/global/workloadIdentityPools/vercel/providers/vercel`;
 
 let db: Firestore | undefined;
+let federated: AuthClient | undefined;
 
+// Ostrá data: na Vercelu (nebo s klíčem). Rozhoduje se při buildu v next.config.ts.
 export function isFirebaseConfigured(): boolean {
-  return Boolean(process.env.FIREBASE_SERVICE_ACCOUNT);
+  return process.env.NEXT_PUBLIC_LIVE_DATA === "1";
+}
+
+function serviceAccountKey(): { project_id?: string; client_email: string; private_key: string } | undefined {
+  const raw = process.env.FIREBASE_SERVICE_ACCOUNT;
+  return raw ? JSON.parse(raw) : undefined;
+}
+
+function federatedClient(): AuthClient {
+  if (!federated) {
+    const client = ExternalAccountClient.fromJSON({
+      type: "external_account",
+      audience: WIF_AUDIENCE,
+      subject_token_type: "urn:ietf:params:oauth:token-type:jwt",
+      token_url: "https://sts.googleapis.com/v1/token",
+      service_account_impersonation_url: `https://iamcredentials.googleapis.com/v1/projects/-/serviceAccounts/${SERVICE_ACCOUNT}:generateAccessToken`,
+      subject_token_supplier: { getSubjectToken: () => getVercelOidcToken() },
+    });
+    if (!client) throw new Error("Nepodařilo se vytvořit federovaného klienta Google Cloud");
+    federated = client;
+  }
+  return federated;
+}
+
+// Firebase Admin potřebuje jen přístupový token — dodá ho federovaný klient
+function federatedCredential(): Credential {
+  return {
+    async getAccessToken() {
+      const client = federatedClient();
+      const { token } = await client.getAccessToken();
+      if (!token) throw new Error("Google Cloud nevrátil přístupový token");
+      const expiry = client.credentials.expiry_date;
+      return { access_token: token, expires_in: expiry ? Math.floor((expiry - Date.now()) / 1000) : 3000 };
+    },
+  };
 }
 
 function adminApp(): App {
   if (getApps().length) return getApp();
-  const raw = process.env.FIREBASE_SERVICE_ACCOUNT;
-  if (!raw) throw new Error("FIREBASE_SERVICE_ACCOUNT není nastavený");
-  return initializeApp({ credential: cert(JSON.parse(raw)) });
+  const key = serviceAccountKey();
+  return initializeApp({
+    projectId: PROJECT_ID,
+    credential: key ? cert({ projectId: key.project_id, clientEmail: key.client_email, privateKey: key.private_key }) : federatedCredential(),
+  });
 }
 
 export function adminDb(): Firestore {
   if (!db) {
-    db = getFirestore(adminApp());
-    db.settings({ ignoreUndefinedProperties: true });
+    const key = serviceAccountKey();
+    db = new Firestore({
+      projectId: PROJECT_ID,
+      ignoreUndefinedProperties: true,
+      ...(key
+        ? { credentials: { client_email: key.client_email, private_key: key.private_key } }
+        : { authClient: federatedClient() }),
+    });
   }
   return db;
 }

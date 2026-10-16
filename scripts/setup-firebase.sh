@@ -8,7 +8,8 @@
 #   2. přihlašování: e-mail odkazem (bez hesla) + telefon/SMS jen pro CZ/SK, povolené domény
 #   3. zaregistruje webovou aplikaci a vypíše firebaseConfig
 #   4. Firestore pravidla: klient nesmí nic (data čte jen server přes Admin SDK)
-#   5. servisní účet pro Vercel (Firestore + Auth) a jeho klíč do ~/nemodash-vercel-key.json
+#   5. servisní účet pro Vercel (Firestore + Auth) a přístup bez klíče přes Vercel OIDC
+#      (Workload Identity Federation — klíče servisních účtů organizace zakazuje)
 #
 # Skript je idempotentní — dá se pustit opakovaně.
 set -euo pipefail
@@ -16,7 +17,8 @@ set -euo pipefail
 P="${PROJECT_ID:-nemodash}"
 SA_NAME="nemodash-vercel"
 SA="${SA_NAME}@${P}.iam.gserviceaccount.com"
-KEY_FILE="$HOME/nemodash-vercel-key.json"
+VERCEL_TEAM="${VERCEL_TEAM:-jakub-martinecs-projects}"
+VERCEL_PROJECT="${VERCEL_PROJECT:-nemodash}"
 DOMAINS='["localhost","'"$P"'.firebaseapp.com","'"$P"'.web.app","nemodash.yard25.com","nemodash.vercel.app"]'
 
 step() { printf '\n\033[1m== %s\033[0m\n' "$*"; }
@@ -43,7 +45,8 @@ fail_if_error() { # vypíše chybu z odpovědi API a vrátí 1
 step "1/5 API"
 gcloud services enable \
   firebase.googleapis.com identitytoolkit.googleapis.com \
-  firestore.googleapis.com firebaserules.googleapis.com iam.googleapis.com
+  firestore.googleapis.com firebaserules.googleapis.com iam.googleapis.com \
+  iamcredentials.googleapis.com sts.googleapis.com
 ok "zapnuto"
 
 step "2/5 Přihlašování"
@@ -97,7 +100,7 @@ if jq -e '.error.status == "ALREADY_EXISTS"' >/dev/null <<<"$R"; then
 fi
 fail_if_error "$R" && ok "nasazena (vše zakázáno pro klienty)"
 
-step "5/5 Servisní účet pro Vercel"
+step "5/5 Přístup z Vercelu (bez klíče, přes OIDC)"
 if ! gcloud iam service-accounts describe "$SA" >/dev/null 2>&1; then
   gcloud iam service-accounts create "$SA_NAME" --display-name="NemoDash – Vercel server" >/dev/null
 fi
@@ -111,30 +114,35 @@ for ROLE in roles/datastore.user roles/firebaseauth.admin; do
   done
 done
 ok "$SA (Firestore + Auth)"
-if [[ -s "$KEY_FILE" ]]; then
-  ok "klíč už existuje: $KEY_FILE"
-elif rm -f "$KEY_FILE" && gcloud iam service-accounts keys create "$KEY_FILE" --iam-account="$SA" 2>/tmp/keyerr; then
-  chmod 600 "$KEY_FILE"
-  ok "klíč uložen: $KEY_FILE"
-else
-  rm -f "$KEY_FILE"
-  warn "klíč nešel vytvořit: $(tail -1 /tmp/keyerr)"
-  warn "pravděpodobně politika organizace zakazuje klíče — napište Claudovi, nastavíme OIDC"
+
+# Vercel se prokazuje svým OIDC tokenem; Google ho vymění za token servisního účtu.
+PN="$(gcloud projects describe "$P" --format='value(projectNumber)')"
+if ! gcloud iam workload-identity-pools describe vercel --location=global >/dev/null 2>&1; then
+  gcloud iam workload-identity-pools create vercel --location=global --display-name="Vercel" >/dev/null
 fi
+if ! gcloud iam workload-identity-pools providers describe vercel --location=global \
+     --workload-identity-pool=vercel >/dev/null 2>&1; then
+  gcloud iam workload-identity-pools providers create-oidc vercel --location=global \
+    --workload-identity-pool=vercel --display-name="Vercel ($VERCEL_TEAM)" \
+    --issuer-uri="https://oidc.vercel.com/$VERCEL_TEAM" \
+    --allowed-audiences="https://vercel.com/$VERCEL_TEAM" \
+    --attribute-mapping="google.subject=assertion.sub,attribute.project=assertion.project" \
+    --attribute-condition="assertion.project == '$VERCEL_PROJECT'" >/dev/null
+fi
+gcloud iam service-accounts add-iam-policy-binding "$SA" --role=roles/iam.workloadIdentityUser \
+  --member="principalSet://iam.googleapis.com/projects/$PN/locations/global/workloadIdentityPools/vercel/attribute.project/$VERCEL_PROJECT" \
+  >/dev/null
+ok "Vercel projekt $VERCEL_TEAM/$VERCEL_PROJECT smí jednat jako $SA_NAME"
 
 step "Hotovo"
 cat <<EOF
 
-1) Pošlete Claudovi tenhle řádek (není tajný):
+Ve Vercelu (nemodash › Settings):
+  1) Security › „Secure Backend Access with OIDC Federation“ musí být zapnuté (Team issuer)
+  2) Environment Variables › ADMIN_PHONES = vaše číslo (+420…), Production + Preview
 
+Firebase konfigurace pro web (není tajná, už je v aplikaci):
    $FIREBASE_CONFIG
 
-2) Klíč NEPOSÍLEJTE — vložte ho do Vercelu:
-   cat $KEY_FILE
-   → Vercel › nemodash › Settings › Environment Variables
-     Name: FIREBASE_SERVICE_ACCOUNT, Value: celý obsah, ✓ Sensitive, Production + Preview
-   pak: rm $KEY_FILE
-
-3) Ručně v konzoli zbývá jen Google přihlášení (potřebuje OAuth klienta):
-   Authentication › Sign-in method › Google › Enable
+Ručně v konzoli zbývá jen Google přihlášení: Authentication › Sign-in method › Google › Enable
 EOF
