@@ -123,7 +123,7 @@ fi
 if ! gcloud iam workload-identity-pools providers describe vercel --location=global \
      --workload-identity-pool=vercel >/dev/null 2>&1; then
   gcloud iam workload-identity-pools providers create-oidc vercel --location=global \
-    --workload-identity-pool=vercel --display-name="Vercel ($VERCEL_TEAM)" \
+    --workload-identity-pool=vercel --display-name="Vercel" \
     --issuer-uri="https://oidc.vercel.com/$VERCEL_TEAM" \
     --allowed-audiences="https://vercel.com/$VERCEL_TEAM" \
     --attribute-mapping="google.subject=assertion.sub,attribute.project=assertion.project" \
