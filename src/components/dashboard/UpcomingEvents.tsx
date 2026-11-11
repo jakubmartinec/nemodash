@@ -1,6 +1,6 @@
 import { useLocale, useTranslations } from "next-intl";
 import { cn } from "@/lib/utils";
-import type { UpcomingEvent } from "@/lib/mock-data";
+import type { UpcomingEvent } from "@/lib/data/selectors";
 import { formatDate } from "@/lib/format";
 import { getToday } from "@/lib/constants";
 

@@ -1,8 +1,7 @@
-// Mock data pro vývoj — bude nahrazeno Firebase Firestore
+// Demo data — běží nad nimi lokální vývoj a náhledy bez přístupu k Firestore
 // Dnešní datum: 2026-03-08
 
 import { Property, Tenant, Payment, Inspection, Insurance, Contract, PropertyDocument, Landlord, UtilitySettlement } from "./types";
-import { getToday } from "./constants";
 
 // ─── NEMOVITOSTI ────────────────────────────────────────────────────────────
 
@@ -937,161 +936,19 @@ export const mockSettlements: UtilitySettlement[] = [
   },
 ];
 
-// ─── HELPER FUNKCE ───────────────────────────────────────────────────────────
+// ─── HELPER FUNKCE (AI asistent — prototyp nad demo daty) ───────────────────
+// Stránky čtou data přes lib/data (Firestore nebo tato demo data).
 
 export function getPropertyById(id: string): Property | undefined {
   return mockProperties.find((p) => p.id === id);
-}
-
-export function getTenantsByProperty(propertyId: string): Tenant[] {
-  return mockTenants.filter((t) => t.propertyId === propertyId);
-}
-
-export function getPaymentsByProperty(propertyId: string): Payment[] {
-  return mockPayments.filter((p) => p.propertyId === propertyId);
-}
-
-export function getInspectionsByProperty(propertyId: string): Inspection[] {
-  return mockInspections.filter((i) => i.propertyId === propertyId);
-}
-
-export function getInsurancesByProperty(propertyId: string): Insurance[] {
-  return mockInsurances.filter((i) => i.propertyId === propertyId);
-}
-
-export function getContractsByProperty(propertyId: string): Contract[] {
-  return mockContracts.filter((c) => c.propertyId === propertyId);
 }
 
 export function getTenantById(id: string): Tenant | undefined {
   return mockTenants.find((t) => t.id === id);
 }
 
-export function getTenantByPortalToken(token: string): Tenant | undefined {
-  return mockTenants.find((t) => t.portalToken === token);
-}
-
-export function getPaymentsByTenant(tenantId: string): Payment[] {
-  return mockPayments
-    .filter((p) => p.tenantId === tenantId)
-    .sort((a, b) => b.dueDate.localeCompare(a.dueDate));
-}
-
-// Vyúčtování nejnovější první
-export function getSettlementsByTenant(tenantId: string): UtilitySettlement[] {
-  return mockSettlements
-    .filter((s) => s.tenantId === tenantId)
-    .sort((a, b) => b.periodTo.localeCompare(a.periodTo));
-}
-
 export function getSettlementsByProperty(propertyId: string): UtilitySettlement[] {
   return mockSettlements
     .filter((s) => s.propertyId === propertyId)
     .sort((a, b) => b.periodTo.localeCompare(a.periodTo));
-}
-
-export function getDocumentsByProperty(propertyId: string): PropertyDocument[] {
-  return mockDocuments
-    .filter((d) => d.propertyId === propertyId)
-    .sort((a, b) => b.uploadedAt.localeCompare(a.uploadedAt));
-}
-
-// Vrátí platby podle stavu
-export function getPaymentsByStatus(status: Payment["status"]): Payment[] {
-  return mockPayments.filter((p) => p.status === status);
-}
-
-// Nadcházející události: revize expirující do 90 dní + smlouvy expirující do 90 dní
-export interface UpcomingEvent {
-  type: "inspection" | "contract" | "insurance";
-  label: string;
-  propertyId: string;
-  propertyName: string;
-  dueDate: string;
-  status: "expiring_soon" | "expired";
-  referenceId: string;
-}
-
-export function getUpcomingEvents(withinDays = 90): UpcomingEvent[] {
-  const now = getToday();
-  const threshold = new Date(now.getTime() + withinDays * 24 * 60 * 60 * 1000);
-  const events: UpcomingEvent[] = [];
-
-  // Revize
-  for (const insp of mockInspections) {
-    const due = new Date(insp.nextDueDate);
-    if (due <= threshold) {
-      const prop = getPropertyById(insp.propertyId);
-      events.push({
-        type: "inspection",
-        label: insp.type,
-        propertyId: insp.propertyId,
-        propertyName: prop?.name ?? insp.propertyId,
-        dueDate: insp.nextDueDate,
-        status: due < now ? "expired" : "expiring_soon",
-        referenceId: insp.id,
-      });
-    }
-  }
-
-  // Smlouvy
-  for (const contract of mockContracts) {
-    if (!contract.endDate) continue;
-    const due = new Date(contract.endDate);
-    if (due <= threshold) {
-      const prop = getPropertyById(contract.propertyId);
-      events.push({
-        type: "contract",
-        label: contract.type,
-        propertyId: contract.propertyId,
-        propertyName: prop?.name ?? contract.propertyId,
-        dueDate: contract.endDate,
-        status: due < now ? "expired" : "expiring_soon",
-        referenceId: contract.id,
-      });
-    }
-  }
-
-  // Pojistky
-  for (const ins of mockInsurances) {
-    const due = new Date(ins.endDate);
-    if (due <= threshold) {
-      const prop = getPropertyById(ins.propertyId);
-      events.push({
-        type: "insurance",
-        label: ins.type,
-        propertyId: ins.propertyId,
-        propertyName: prop?.name ?? ins.propertyId,
-        dueDate: ins.endDate,
-        status: due < now ? "expired" : "expiring_soon",
-        referenceId: ins.id,
-      });
-    }
-  }
-
-  // Seřadit: nejbližší termín první
-  return events.sort((a, b) => a.dueDate.localeCompare(b.dueDate));
-}
-
-// Souhrné statistiky pro dashboard
-export function getDashboardStats() {
-  const overduePayments = mockPayments.filter((p) => p.status === "overdue");
-  const pendingPayments = mockPayments.filter((p) => p.status === "pending");
-  const expiredInspections = mockInspections.filter((i) => i.status === "expired");
-  const expiringSoonInspections = mockInspections.filter((i) => i.status === "expiring_soon");
-  const activeContracts = mockContracts.filter((c) => {
-    if (!c.endDate) return true;
-    return new Date(c.endDate) >= getToday();
-  });
-
-  return {
-    totalProperties: mockProperties.length,
-    totalHouses: mockProperties.filter((p) => p.type === "house").length,
-    totalLand: mockProperties.filter((p) => p.type === "land").length,
-    activeContracts: activeContracts.length,
-    overduePayments: overduePayments.length,
-    pendingPayments: pendingPayments.length,
-    expiredInspections: expiredInspections.length,
-    expiringSoonInspections: expiringSoonInspections.length,
-  };
 }

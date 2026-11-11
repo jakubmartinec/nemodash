@@ -2,12 +2,16 @@
 
 // Typy jsou importovány dle potřeby z ./types
 
-// Referenční „dnešek“ mock dat — všechny stavy se počítají vůči němu.
-// Po napojení na databázi stačí vrátit new Date().
+// Referenční „dnešek“ demo dat — všechny stavy se počítají vůči němu.
+// S ostrými daty (Firestore) platí skutečné dnešní datum.
 export const REFERENCE_DATE = "2026-03-08";
 
+export const IS_LIVE_DATA = process.env.NEXT_PUBLIC_LIVE_DATA === "1";
+
 export function getToday(): Date {
-  return new Date(REFERENCE_DATE);
+  if (!IS_LIVE_DATA) return new Date(REFERENCE_DATE);
+  const now = new Date();
+  return new Date(Date.UTC(now.getFullYear(), now.getMonth(), now.getDate()));
 }
 
 export function daysUntil(dateStr: string): number {
