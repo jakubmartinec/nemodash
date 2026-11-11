@@ -150,9 +150,12 @@
       "contractEnd": "Contract End",
       "monthlyRent": "Monthly Rent",
       "deposit": "Deposit",
-      "notes": "Notes"
+      "notes": "Notes",
+      "annualRent": "Annual lease rent"
     },
-    "newSettlement": "New settlement"
+    "newSettlement": "New settlement",
+    "leaseCalc": "{ha} ha × {price}/ha",
+    "edit": "Edit"
   },
   "payments": {
     "title": "Payments",
@@ -294,7 +297,8 @@
     "logout": "Sign out",
     "home": "Home",
     "propertyDetail": "Property detail",
-    "new": "New"
+    "new": "New",
+    "edit": "Edit"
   },
   "common": {
     "save": "Save",
@@ -419,7 +423,14 @@
     "emailSubject": "Settlement question — {property}",
     "privacy": "Only you see this page, through your personal link. Do not share it.",
     "invalidTitle": "Link not valid",
-    "invalidText": "Ask your landlord for a new link."
+    "invalidText": "Ask your landlord for a new link.",
+    "lease": {
+      "title": "Lease rent",
+      "area": "Area",
+      "areaValue": "{ha} ha ({m2} m²)",
+      "pricePerHectare": "Price per hectare per year",
+      "annual": "Annual lease rent"
+    }
   },
   "tenantPortal": {
     "settlements": "Settlements",
@@ -539,7 +550,15 @@
       "advances": "Monthly utility advances (CZK)",
       "advanceWater": "Water",
       "advanceGas": "Gas",
-      "advanceElectricity": "Electricity"
+      "advanceElectricity": "Electricity",
+      "lease": "Lease rent (paid yearly)",
+      "leaseArea": "Area (m²)",
+      "leaseAreaHint": "= {ha} ha",
+      "pricePerHectare": "Price per hectare (CZK/ha/year)",
+      "annualRent": "Annual lease rent (CZK)",
+      "annualRentHint": "Calculated from the area and price per hectare; can be overwritten. Monthly {monthly}.",
+      "annualRentEmpty": "Enter the area and price per hectare, or the annual amount directly.",
+      "editTitle": "Edit: {name}"
     },
     "settlement": {
       "title": "New settlement",

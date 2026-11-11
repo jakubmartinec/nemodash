@@ -3,13 +3,14 @@
 import { useState } from "react";
 import Link from "next/link";
 import { useTranslations } from "next-intl";
-import { Mail, Phone, Link2, Check, ExternalLink, UserPlus, Calculator, Paperclip } from "lucide-react";
+import { Mail, Phone, Link2, Check, ExternalLink, UserPlus, Calculator, Pencil, Paperclip } from "lucide-react";
 import { cn } from "@/lib/utils";
 import type { PropertyDocument, Tenant, UtilitySettlement } from "@/lib/types";
 import SettlementCard from "@/components/settlements/SettlementCard";
 import DocumentLinks from "@/components/documents/DocumentLinks";
 import { getContractStatus, IS_LIVE_DATA } from "@/lib/constants";
-import { formatCZK, formatDate } from "@/lib/format";
+import { formatCZK, formatDate, formatNumber } from "@/lib/format";
+import { annualRentOf, M2_PER_HECTARE } from "@/lib/rent";
 
 interface TenantsTabProps {
   locale: string;
@@ -120,7 +121,8 @@ export default function TenantsTab({ locale, propertyId, tenants, settlements, d
                   {tTen(`type.${tenant.type}`)}
                 </span>
               </div>
-              <span
+              <div className="flex items-center gap-2">
+                <span
                 className={cn(
                   "text-xs font-medium px-2 py-0.5 rounded border",
                   CONTRACT_STATUS_STYLES[contractStatus]
@@ -128,6 +130,14 @@ export default function TenantsTab({ locale, propertyId, tenants, settlements, d
               >
                 {statusLabel}
               </span>
+                <Link
+                  href={`${base}/tenants/${tenant.id}/edit`}
+                  className="inline-flex items-center gap-1.5 rounded-md border border-border px-2.5 py-1 text-xs hover:bg-muted"
+                >
+                  <Pencil className="h-3.5 w-3.5" />
+                  {tTen("edit")}
+                </Link>
+              </div>
             </div>
 
             {/* Kontakt */}
@@ -154,11 +164,26 @@ export default function TenantsTab({ locale, propertyId, tenants, settlements, d
 
             {/* Finance + smlouva */}
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-              <div>
-                <p className="text-xs text-muted-foreground">{tTen("fields.monthlyRent")}</p>
-                <p className="text-sm font-semibold">{formatCZK(tenant.monthlyRent, locale)}</p>
-                <p className="text-xs text-muted-foreground">{t("contractMonthly")}</p>
-              </div>
+              {tenant.type === "lessee" ? (
+                <div>
+                  <p className="text-xs text-muted-foreground">{tTen("fields.annualRent")}</p>
+                  <p className="text-sm font-semibold">{formatCZK(annualRentOf(tenant), locale)}</p>
+                  {tenant.leaseArea !== undefined && tenant.pricePerHectare !== undefined && (
+                    <p className="text-xs text-muted-foreground">
+                      {tTen("leaseCalc", {
+                        ha: formatNumber(tenant.leaseArea / M2_PER_HECTARE, locale, 4),
+                        price: formatCZK(tenant.pricePerHectare, locale),
+                      })}
+                    </p>
+                  )}
+                </div>
+              ) : (
+                <div>
+                  <p className="text-xs text-muted-foreground">{tTen("fields.monthlyRent")}</p>
+                  <p className="text-sm font-semibold">{formatCZK(tenant.monthlyRent, locale)}</p>
+                  <p className="text-xs text-muted-foreground">{t("contractMonthly")}</p>
+                </div>
+              )}
               {tenant.deposit && (
                 <div>
                   <p className="text-xs text-muted-foreground">{t("deposit")}</p>
@@ -178,7 +203,7 @@ export default function TenantsTab({ locale, propertyId, tenants, settlements, d
             </div>
 
             {/* Vyúčtování záloh + odkaz pro nájemníka */}
-            {(tenantSettlements.length > 0 || tenant.portalToken) && (
+            {(tenantSettlements.length > 0 || tenant.portalToken || IS_LIVE_DATA) && (
               <div className="border-t border-border pt-3 space-y-3">
                 {tenantSettlements.length > 0 && (
                   <div className="space-y-3">

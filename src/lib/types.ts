@@ -24,8 +24,12 @@ export interface Tenant {
   type: "tenant" | "lessee"; // nájemník vs. pachtýř
   contractStart: string;
   contractEnd?: string;
-  monthlyRent: number;
+  monthlyRent: number; // u pachtu = roční pachtovné / 12 (pro souhrny)
   deposit?: number;
+  // Pacht se platí ročně: pachtovné = výměra × cena za hektar
+  annualRent?: number; // Kč/rok
+  leaseArea?: number; // propachtovaná výměra v m²
+  pricePerHectare?: number; // Kč za hektar a rok
   notes?: string;
   portalToken?: string; // tajný odkaz do nájemnického portálu (do napojení Firebase Auth)
   advances?: {

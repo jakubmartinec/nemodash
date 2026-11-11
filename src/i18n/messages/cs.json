@@ -150,9 +150,12 @@
       "contractEnd": "Konec smlouvy",
       "monthlyRent": "Měsíční nájemné",
       "deposit": "Kauce",
-      "notes": "Poznámky"
+      "notes": "Poznámky",
+      "annualRent": "Roční pachtovné"
     },
-    "newSettlement": "Nové vyúčtování"
+    "newSettlement": "Nové vyúčtování",
+    "leaseCalc": "{ha} ha × {price}/ha",
+    "edit": "Upravit"
   },
   "payments": {
     "title": "Platby",
@@ -294,7 +297,8 @@
     "logout": "Odhlásit se",
     "home": "Domů",
     "propertyDetail": "Detail nemovitosti",
-    "new": "Nový záznam"
+    "new": "Nový záznam",
+    "edit": "Úprava"
   },
   "common": {
     "save": "Uložit",
@@ -419,7 +423,14 @@
     "emailSubject": "Dotaz k vyúčtování — {property}",
     "privacy": "Tuto stránku vidíte jen přes svůj osobní odkaz. Nesdílejte ho.",
     "invalidTitle": "Odkaz neplatí",
-    "invalidText": "Požádejte pronajímatele o nový odkaz."
+    "invalidText": "Požádejte pronajímatele o nový odkaz.",
+    "lease": {
+      "title": "Pachtovné",
+      "area": "Výměra",
+      "areaValue": "{ha} ha ({m2} m²)",
+      "pricePerHectare": "Cena za hektar a rok",
+      "annual": "Roční pachtovné"
+    }
   },
   "tenantPortal": {
     "settlements": "Vyúčtování",
@@ -539,7 +550,15 @@
       "advances": "Měsíční zálohy na služby (Kč)",
       "advanceWater": "Voda",
       "advanceGas": "Plyn",
-      "advanceElectricity": "Elektřina"
+      "advanceElectricity": "Elektřina",
+      "lease": "Pachtovné (platí se ročně)",
+      "leaseArea": "Výměra (m²)",
+      "leaseAreaHint": "= {ha} ha",
+      "pricePerHectare": "Cena za hektar (Kč/ha/rok)",
+      "annualRent": "Roční pachtovné (Kč)",
+      "annualRentHint": "Spočítá se z výměry a ceny za hektar, dá se přepsat. Měsíčně {monthly}.",
+      "annualRentEmpty": "Zadejte výměru a cenu za hektar, nebo rovnou roční částku.",
+      "editTitle": "Upravit: {name}"
     },
     "settlement": {
       "title": "Nové vyúčtování",

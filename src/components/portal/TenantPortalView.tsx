@@ -1,7 +1,8 @@
 import { getTranslations } from "next-intl/server";
 import { Building2, Mail, Phone, ShieldCheck } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { formatCZK, formatDate } from "@/lib/format";
+import { formatCZK, formatDate, formatNumber } from "@/lib/format";
+import { annualRentOf, M2_PER_HECTARE } from "@/lib/rent";
 import { computeSettlement } from "@/lib/settlement";
 import { getDataset } from "@/lib/data/store";
 import {
@@ -168,6 +169,34 @@ export default async function TenantPortalView({
           </Section>
         ))}
 
+        {tenant.type === "lessee" ? (
+          // Pacht: roční pachtovné, případně z výměry a ceny za hektar
+          <Section title={t("lease.title")}>
+            <dl className="divide-y divide-border text-sm">
+              {tenant.leaseArea !== undefined && (
+                <div className="flex justify-between py-1.5">
+                  <dt className="text-muted-foreground">{t("lease.area")}</dt>
+                  <dd className="tabular-nums">
+                    {t("lease.areaValue", {
+                      ha: formatNumber(tenant.leaseArea / M2_PER_HECTARE, locale, 4),
+                      m2: formatNumber(tenant.leaseArea, locale),
+                    })}
+                  </dd>
+                </div>
+              )}
+              {tenant.pricePerHectare !== undefined && (
+                <div className="flex justify-between py-1.5">
+                  <dt className="text-muted-foreground">{t("lease.pricePerHectare")}</dt>
+                  <dd className="tabular-nums">{czk(tenant.pricePerHectare)}</dd>
+                </div>
+              )}
+              <div className="flex justify-between py-1.5 font-semibold">
+                <dt>{t("lease.annual")}</dt>
+                <dd className="tabular-nums">{czk(annualRentOf(tenant), true)}</dd>
+              </div>
+            </dl>
+          </Section>
+        ) : (
         <Section title={t("monthly")}>
           <dl className="divide-y divide-border text-sm">
             <div className="flex justify-between py-1.5">
@@ -186,6 +215,7 @@ export default async function TenantPortalView({
             </div>
           </dl>
         </Section>
+        )}
 
         <Section title={t("payments")}>
           {payments.length === 0 ? (

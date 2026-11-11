@@ -23,6 +23,7 @@ const SEGMENT_KEYS: Record<string, string> = {
   inspections: "nav.inspections",
   settings: "nav.settings",
   new: "layout.new",
+  edit: "layout.edit",
 };
 
 // Mezisegmenty bez vlastní stránky (…/tenants/new, …/settlements/new)
@@ -53,7 +54,8 @@ function useBreadcrumbs(
     const isLast = idx === segments.length - 1;
     const href = `/${locale}/${segments.slice(0, idx + 1).join("/")}`;
 
-    if (SKIPPED_SEGMENTS.has(seg)) return;
+    // ID nájemníka (…/tenants/<id>/edit) nemá vlastní stránku
+    if (SKIPPED_SEGMENTS.has(seg) || SKIPPED_SEGMENTS.has(segments[idx - 1] ?? "")) return;
     if (SEGMENT_KEYS[seg]) {
       crumbs.push({ label: t(SEGMENT_KEYS[seg] as Parameters<typeof t>[0]), href: isLast ? undefined : href });
     } else {

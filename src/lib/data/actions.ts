@@ -8,6 +8,7 @@ import { getSession } from "@/lib/auth/session";
 import type { Landlord, Property, Tenant, UtilityKind, UtilitySettlement } from "@/lib/types";
 import { COLLECTIONS, getDataset, LANDLORD_DOC } from "./store";
 import { propertyById, tenantById } from "./selectors";
+import { annualLeaseRent, monthlyFromAnnual } from "@/lib/rent";
 
 export type FormState = { error?: string; saved?: boolean } | undefined;
 
@@ -102,6 +103,46 @@ export async function createProperty(locale: string, _prev: FormState, fd: FormD
 }
 
 // ── nájemník ─────────────────────────────────────────────────────────────────
+// Údaje nájemníka z formuláře (nový i úprava)
+function parseTenant(fd: FormData, propertyId: string): Omit<Tenant, "id"> {
+  const type = oneOf(fd, "type", ["tenant", "lessee"] as const);
+  const advances: NonNullable<Tenant["advances"]> = {
+    water: num(fd, "advanceWater"),
+    gas: num(fd, "advanceGas"),
+    electricity: num(fd, "advanceElectricity"),
+  };
+
+  // Pacht: roční pachtovné zadané přímo, nebo spočtené z výměry a ceny za hektar
+  const leaseArea = type === "lessee" ? num(fd, "leaseArea") : undefined;
+  const pricePerHectare = type === "lessee" ? num(fd, "pricePerHectare") : undefined;
+  const annualRent =
+    type === "lessee"
+      ? (num(fd, "annualRent") ??
+        (leaseArea !== undefined && pricePerHectare !== undefined
+          ? annualLeaseRent(leaseArea, pricePerHectare)
+          : undefined))
+      : undefined;
+  if (type === "lessee" && annualRent === undefined) throw new FormError("required");
+
+  return {
+    propertyId,
+    name: required(fd, "name"),
+    type,
+    phone: text(fd, "phone"),
+    email: text(fd, "email")?.toLowerCase(),
+    contractStart: requiredDate(fd, "contractStart"),
+    contractEnd: date(fd, "contractEnd"),
+    monthlyRent: annualRent !== undefined ? monthlyFromAnnual(annualRent) : requiredNum(fd, "monthlyRent"),
+    annualRent,
+    leaseArea,
+    pricePerHectare,
+    deposit: num(fd, "deposit"),
+    advances:
+      type === "tenant" && Object.values(advances).some((v) => v !== undefined) ? advances : undefined,
+    notes: text(fd, "notes"),
+  };
+}
+
 export async function createTenant(
   locale: string,
   propertyId: string,
@@ -111,28 +152,26 @@ export async function createTenant(
   const result = await guard(async () => {
     await assertAdmin();
     if (!propertyById(await getDataset(), propertyId)) throw new FormError("notFound");
+    await adminDb().collection(COLLECTIONS.tenants).add(parseTenant(fd, propertyId));
+    return undefined;
+  });
+  if (result?.error) return result;
+  revalidatePath(`/${locale}`, "layout");
+  redirect(`/${locale}/properties/${propertyId}?tab=tenants`);
+}
 
-    const phone = text(fd, "phone");
-    const email = text(fd, "email")?.toLowerCase();
-    const advances: NonNullable<Tenant["advances"]> = {
-      water: num(fd, "advanceWater"),
-      gas: num(fd, "advanceGas"),
-      electricity: num(fd, "advanceElectricity"),
-    };
-    const tenant: Omit<Tenant, "id"> = {
-      propertyId,
-      name: required(fd, "name"),
-      type: oneOf(fd, "type", ["tenant", "lessee"] as const),
-      phone,
-      email,
-      contractStart: requiredDate(fd, "contractStart"),
-      contractEnd: date(fd, "contractEnd"),
-      monthlyRent: requiredNum(fd, "monthlyRent"),
-      deposit: num(fd, "deposit"),
-      advances: Object.values(advances).some((v) => v !== undefined) ? advances : undefined,
-      notes: text(fd, "notes"),
-    };
-    await adminDb().collection(COLLECTIONS.tenants).add(tenant);
+export async function updateTenant(
+  locale: string,
+  propertyId: string,
+  tenantId: string,
+  _prev: FormState,
+  fd: FormData
+): Promise<FormState> {
+  const result = await guard(async () => {
+    await assertAdmin();
+    if (tenantById(await getDataset(), tenantId)?.propertyId !== propertyId) throw new FormError("notFound");
+    // Celý záznam se přepíše — pole, která formulář už nevyplňuje (např. pacht → nájem), zmizí
+    await adminDb().collection(COLLECTIONS.tenants).doc(tenantId).set(parseTenant(fd, propertyId));
     return undefined;
   });
   if (result?.error) return result;

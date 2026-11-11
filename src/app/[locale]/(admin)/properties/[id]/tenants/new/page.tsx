@@ -18,6 +18,9 @@ export default async function NewTenantPage({ params }: { params: Promise<{ loca
       <TenantForm
         action={createTenant.bind(null, locale, id)}
         cancelHref={`/${locale}/properties/${id}?tab=tenants`}
+        // Pozemek se typicky propachtovává celý — předvyplnit pacht a výměru
+        defaultType={property.type === "land" ? "lessee" : "tenant"}
+        defaultLeaseArea={property.type === "land" ? property.area : undefined}
       />
     </div>
   );
