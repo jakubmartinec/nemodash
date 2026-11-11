@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { getTranslations } from "next-intl/server";
 import { Plus } from "lucide-react";
-import { getDataset } from "@/lib/data/store";
+import { getAdminDataset } from "@/lib/auth/session";
 import {
   paymentsByProperty,
   inspectionsByProperty,
@@ -21,7 +21,7 @@ export default async function PropertiesPage({
 }) {
   const { locale } = await params;
   const t = await getTranslations({ locale, namespace: "properties" });
-  const ds = await getDataset();
+  const ds = await getAdminDataset(locale);
   const TODAY = getToday();
 
   const items: PropertyCardData[] = ds.properties.map((property) => {

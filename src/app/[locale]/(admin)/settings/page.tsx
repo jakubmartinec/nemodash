@@ -1,12 +1,12 @@
 import { getTranslations } from "next-intl/server";
 import { saveLandlord } from "@/lib/data/actions";
-import { getDataset } from "@/lib/data/store";
+import { getAdminDataset } from "@/lib/auth/session";
 import LandlordForm from "@/components/settings/LandlordForm";
 
 export default async function SettingsPage({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;
   const t = await getTranslations({ locale, namespace: "settings" });
-  const { landlord } = await getDataset();
+  const { landlord } = await getAdminDataset(locale);
 
   return (
     <div className="space-y-6">

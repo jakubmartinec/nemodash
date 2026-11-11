@@ -1,10 +1,11 @@
 import { getTranslations } from "next-intl/server";
-import { getDataset } from "@/lib/data/store";
+import { getAdminDataset } from "@/lib/auth/session";
 import PaymentsClient from "@/components/payments/PaymentsClient";
 
-export default async function PaymentsPage() {
+export default async function PaymentsPage({ params }: { params: Promise<{ locale: string }> }) {
+  const { locale } = await params;
   const t = await getTranslations("payments");
-  const { payments, properties } = await getDataset();
+  const { payments, properties } = await getAdminDataset(locale);
 
   return (
     <div className="space-y-6">

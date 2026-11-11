@@ -1,14 +1,14 @@
 import { notFound } from "next/navigation";
 import { getTranslations } from "next-intl/server";
 import { createTenant } from "@/lib/data/actions";
-import { getDataset } from "@/lib/data/store";
+import { getAdminDataset } from "@/lib/auth/session";
 import { propertyById } from "@/lib/data/selectors";
 import TenantForm from "@/components/properties/TenantForm";
 import { PageHeader } from "@/components/forms/FormKit";
 
 export default async function NewTenantPage({ params }: { params: Promise<{ locale: string; id: string }> }) {
   const { locale, id } = await params;
-  const property = propertyById(await getDataset(), id);
+  const property = propertyById(await getAdminDataset(locale), id);
   if (!property) notFound();
   const t = await getTranslations({ locale, namespace: "forms.tenant" });
 

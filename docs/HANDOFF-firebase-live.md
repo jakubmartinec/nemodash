@@ -56,8 +56,8 @@ nebo s `FIREBASE_SERVICE_ACCOUNT`; lokálně běží demo data, `NEMODASH_DEMO=1
 4. Když vše funguje: PR #4 z draftu do ready, uživatel mergne → produkce přejde na ostrá data.
    Návrat: Vercel Instant Rollback.
 
-Známé drobnosti mimo PR: stránky pod `(admin)` volají `getDataset()` souběžně s kontrolou
-přihlášení v layoutu (nepřihlášený požadavek zbytečně čte Firestore; data neodcházejí).
+Vyřešeno 11. 11. 2026: stránky pod `(admin)` čtou data přes `getAdminDataset(locale)`
+(`src/lib/auth/session.ts`), takže nepřihlášený požadavek se přesměruje dřív, než sáhne do Firestore.
 
 ## Užitečné
 

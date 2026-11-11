@@ -1,10 +1,11 @@
 import { getTranslations } from "next-intl/server";
-import { getDataset } from "@/lib/data/store";
+import { getAdminDataset } from "@/lib/auth/session";
 import InspectionsClient from "@/components/inspections/InspectionsClient";
 
-export default async function InspectionsPage() {
+export default async function InspectionsPage({ params }: { params: Promise<{ locale: string }> }) {
+  const { locale } = await params;
   const t = await getTranslations("inspections");
-  const { inspections, properties } = await getDataset();
+  const { inspections, properties } = await getAdminDataset(locale);
 
   return (
     <div className="space-y-6">

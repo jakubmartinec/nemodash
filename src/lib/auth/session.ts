@@ -76,3 +76,10 @@ export async function requireAdmin(locale: string): Promise<void> {
   if (!session) redirect(`/${locale}/login`);
   if (session.role !== "admin") redirect(`/${locale}/portal`);
 }
+
+// Data pro stránky správy: nejdřív ověřit správce, až pak číst databázi.
+// (Layout a stránka se renderují souběžně — bez toho by nepřihlášený požadavek četl Firestore.)
+export async function getAdminDataset(locale: string) {
+  await requireAdmin(locale);
+  return getDataset();
+}

@@ -1,7 +1,7 @@
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
 import { getTranslations } from "next-intl/server";
-import { getDataset } from "@/lib/data/store";
+import { getAdminDataset } from "@/lib/auth/session";
 import {
   propertyById,
   tenantsByProperty,
@@ -22,7 +22,7 @@ export default async function PropertyDetailPage({
   const { locale, id } = await params;
   const tCommon = await getTranslations("common");
 
-  const ds = await getDataset();
+  const ds = await getAdminDataset(locale);
   const property = propertyById(ds, id);
   if (!property) notFound();
 

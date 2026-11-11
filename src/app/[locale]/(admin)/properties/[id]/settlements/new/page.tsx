@@ -1,7 +1,7 @@
 import { notFound } from "next/navigation";
 import { getTranslations } from "next-intl/server";
 import { createSettlement } from "@/lib/data/actions";
-import { getDataset } from "@/lib/data/store";
+import { getAdminDataset } from "@/lib/auth/session";
 import { propertyById, settlementsByProperty, tenantsByProperty } from "@/lib/data/selectors";
 import { getToday } from "@/lib/constants";
 import type { UtilityKind } from "@/lib/types";
@@ -12,7 +12,7 @@ const iso = (d: Date) => d.toISOString().slice(0, 10);
 
 export default async function NewSettlementPage({ params }: { params: Promise<{ locale: string; id: string }> }) {
   const { locale, id } = await params;
-  const ds = await getDataset();
+  const ds = await getAdminDataset(locale);
   const property = propertyById(ds, id);
   if (!property) notFound();
   const t = await getTranslations({ locale, namespace: "forms.settlement" });

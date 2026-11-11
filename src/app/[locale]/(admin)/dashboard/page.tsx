@@ -13,7 +13,7 @@ import UpcomingEvents from "@/components/dashboard/UpcomingEvents";
 import MonthlyFinance, {
   type MonthlyFinanceData,
 } from "@/components/dashboard/MonthlyFinance";
-import { getDataset } from "@/lib/data/store";
+import { getAdminDataset } from "@/lib/auth/session";
 import { upcomingEvents, paymentsByProperty, inspectionsByProperty } from "@/lib/data/selectors";
 import { CONTRACT_EXPIRING_THRESHOLD_DAYS, getToday } from "@/lib/constants";
 import { formatCZK } from "@/lib/format";
@@ -25,7 +25,7 @@ export default async function DashboardPage({
 }) {
   const { locale } = await params;
   const t = await getTranslations({ locale, namespace: "dashboard" });
-  const ds = await getDataset();
+  const ds = await getAdminDataset(locale);
   const { properties, payments: allPayments, inspections: allInspections, contracts } = ds;
 
   // ── StatCard 1: nemovitosti ─────────────────────────────────────────────
